@@ -1,0 +1,471 @@
+<div class="container pt-6">
+    <div class="dashboard-header mb-2 py-2 d-flex justify-content-between align-items-center">
+        <span>
+            <h4 class="dashboard-title pt-1">
+                Debit Card Dashboard
+            </h4>
+            <small class="dashboard-subtitle">
+                Manage and monitor all your debit cards in one place.
+            </small>
+        </span>
+        <span class="btn btn-primary " [routerLink]="'/cards'">+ Apply</span>
+    </div>
+
+    <div class="d-flex flex-wrap gap-5 pt-3">
+
+        <div class="d-flex justify-content-between ps-5 gap-5 flip-card" *ngFor="let card of cards">
+
+            <!-- FLIP WRAPPER -->
+            <div class="card-container flip-card-inner"
+                 [class.flipped]="flippedCardId === card.cardId"
+                 (click)="toggleFlip(card.cardId)">
+
+                <!-- FRONT -->
+                <div class="flip-card-front">
+
+                    <img *ngIf="card.cardType?.network=='MasterCard'" src="/assets/Debit master.png"
+                        class="debit-card pe-2">
+
+                    <img *ngIf="card.cardType?.network=='Visa'" src="/assets/Debit visa.png"
+                        class="debit-card">
+
+                    <img *ngIf="card.cardType?.network=='RuPay'" src="/assets/Debit rupay.png"
+                        class="debit-card">
+
+                    <br>
+
+                    <div class="ms-5 d-flex justify-content-between" style="width: 230px;">
+                        <small><i>{{card.account.accountType.accountTypeName}}</i></small>
+                        <small>Balance</small>
+                    </div>
+
+                    <p class="view-balance">
+                        <strong>{{maskBalance(card.account.balance, card.account.accountId) }}</strong>
+                    </p>
+
+                    <div class="card-number" style="text-align: right; width: 95%;">
+                        {{maskCard(card.cardNumber , card.account.accountId)}}
+                    </div>
+
+                    <div class="w-75 d-flex pt-1 ps-4 gap-5">
+
+                        <div class="ms-3">
+                            <div class="fs-8 dates-on-card">VALID FROM</div>
+                            {{card.issueDate | date:'MM/yy'}}
+                        </div>
+
+                        <div class="ms-1">
+                            <div class="fs-8 dates-on-card">VALID THRU</div>
+                            {{card.expiryDate | date:'MM/yy'}}
+                        </div>
+
+                    </div>
+
+                    <div class="ms-5">
+                        <div class="bg-dark w-30 px-2 rounded bg-opacity-10 d-flex gap-2"
+                             (click)="$event.stopPropagation(); toggleAccountView(card.account.accountId)">
+                            <i class="bi"
+                               [ngClass]="activeCardId === card.account.accountId ? 'bi-eye-slash' : 'bi-eye'">
+                            </i>
+                            <small>view</small>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- BACK -->
+                <div class="flip-card-back">
+
+                    <img *ngIf="card.cardType?.network=='MasterCard'" src="/assets/Debit master back.png"
+                        class="debit-card-back">
+
+                    <img *ngIf="card.cardType?.network=='Visa'" src="/assets/Debit visa back.png"
+                        class="debit-card-back">
+
+                    <img *ngIf="card.cardType?.network=='RuPay'" src="/assets/Debit rupay back.png"
+                        class="debit-card-back">
+
+                    <br>
+
+                    <p class="view-cvv">
+                        <strong>{{ card.cvv }}</strong>
+                    </p>
+
+                    <!-- <div class="ms-5">
+                        <div class="bg-dark w-30 px-2 rounded bg-opacity-10 d-flex gap-2"
+                             (click)="$event.stopPropagation(); maskCvv(card.cvv,card.account.accountId)">
+                            <i class="bi"
+                               [ngClass]="activeCardId === card.account.accountId ? 'bi-eye-slash' : 'bi-eye'">
+                            </i>
+                            <small>view</small>
+                        </div>
+                    </div> -->
+
+                </div>
+
+                <!-- EXISTING OVERLAY -->
+                <div *ngIf="card.status === 0" class="blur-overlay-card">
+                    <button class="btn btn-success"
+                            (click)="Activate(card.cardId); $event.stopPropagation()">
+                        Activate
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header text-white" style="background-color: #060661;">
+            <h5 class="mb-0 text-center">
+                <i class="bi bi-credit-card me-2"></i>
+                My Card Details
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 text-center">
+                    <thead class="table-danger">
+                        <tr>
+                            <th>Account Number</th>
+                            <th>Card Number</th>
+                            <th>CVV</th>
+                            <th>Valid From</th>
+                            <th>Expiry Date</th>
+                            <th>Withdraw Limit</th>
+                            <th>Card Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let card of cards">
+                            <td class="fw-semibold">
+                                {{ card.account.accountNumber }}
+                            </td>
+                            <td>
+                                **** **** **** {{ card.cardNumber.toString().slice(-4) }}
+                            </td>
+                            <td>
+                                {{ card.cvv }}
+                            </td>
+                            <td>
+                                {{ card.issueDate | date:'dd MMM, yyyy' }}
+                            </td>
+                            <td>
+                                {{ card.expiryDate | date:'dd MMM, yyyy' }}
+                            </td>
+                            <td class="text-success fw-semibold">
+                                Rs {{ card.withdrawLimit }}
+                            </td>
+                            <td [ngClass]="card.status ? 'text-success' : 'text-danger'">
+                                <strong> {{ card.status ? "Active" : "In-Active" }}</strong>
+                            </td>
+                        </tr>
+                        <tr *ngIf="cards.length === 0">
+                            <td colspan="5" class="text-muted py-4">
+                                No cards available
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-6">
+
+    <div class="card card-controls-box p-4">
+
+        <h4 class="text-center mb-4">Card Controls</h4>
+
+        <div class="d-flex justify-content-center gap-5 card-controls">
+
+            <div class="control" (click)="openLimitModal()">
+                <div class="icon-circle">
+                    <i class="bi bi-sliders"></i>
+                </div>
+                <p>Set Limit</p>
+            </div>
+            <div class="control" (click)="openResetPin()">
+                <div class="icon-circle icon-stack">
+                    <i class="bi bi-shield-lock"></i>
+                    <i class="bi bi-arrow-repeat arrow-icon"></i>
+                </div>
+                <p>Reset PIN</p>
+            </div>
+
+            <div class="control" (click)="openBlockModal()">
+                <div class="icon-circle">
+                    <i class="bi bi-slash-circle"></i>
+                </div>
+                <p>Block Card</p>
+            </div>
+
+            <form *ngIf="showResetPin" class="blur-background" #limitForm="ngForm">
+
+                <div class="reset-pin-card shadow-lg">
+                    <div class="d-flex justify-content-center">
+                        <h5 class="mb-3">Select Card to Reset PIN</h5>
+                        <button type="button" class="btn-close close1" (click)="closeForm()">
+                        </button>
+                    </div>
+                    <div class="card-list">
+
+                        <div *ngFor="let c of cards" class="card-option" (click)="selectCard(c)"
+                            [class.selected]="selectedCardId === c.cardId">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <span>
+                                    <i class="bi bi-credit-card"></i>
+                                    {{ maskCard(c.cardNumber) }}
+                                </span>
+
+                                <span [ngClass]="c.status ? 'text-success' : 'text-danger'">
+                                    {{ c.status ? 'Active' : 'Inactive' }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div *ngIf="selectedCardStatus === 0" class="text-danger mt-2">
+                        This card is inactive. PIN reset is not allowed.
+                    </div>
+                    <div *ngIf="selectedCardId && selectedCardStatus === 1" class="card-option">
+                        <label>Enter CVV</label>
+                        <input type="password" maxlength="3" class="form-control" placeholder="CVV" [(ngModel)]="cvv"
+                            [ngModelOptions]="{standalone: true}">
+                        <label class="pt-2">Enter New PIN</label>
+                        <div class="pin-container">
+                            <input type="password" maxlength="4" class="pin-input" [(ngModel)]="newPin"
+                                [ngModelOptions]="{standalone: true}" (input)="limitPin($event)">
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <button class="btn btn-primary" [disabled]="!newPin || newPin.toString().length !== 4"
+                            (click)="resetPin()">
+                            Reset PIN
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+            <div class="modal fade show" *ngIf="showModal" style="display:block; background:rgba(0,0,0,0.5);">
+                <div class="card-container1">
+                    <div class="d-flex justify-content-center">
+                        <h3 class="title">Manage Your Cards</h3>
+                        <button type="button" class="btn-close close" (click)="closeForm()">
+                        </button>
+                    </div>
+                    <p class="subtitle">
+                        Select an action to block or unblock your card.
+                    </p>
+                    <div class="card">
+                        <div class="tabs">
+                            <button class="tab-btn" [class.active]="selectedForm === 'block'"
+                                (click)="selectForm('block')">
+                                Block Card
+                            </button>
+
+                            <button class="tab-btn" [class.active]="selectedForm === 'unblock'"
+                                (click)="selectForm('unblock')">
+                                Unblock Card
+                            </button>
+
+                        </div>
+
+                        <form *ngIf="selectedForm === 'block'">
+
+                            <strong>Select Card to Block</strong>
+
+                            <div class="card-list">
+
+                                <div *ngFor="let card of cards" class="card-option" (click)="selectCard(card)"
+                                    [class.selected]="selectedCardId === card.cardId">
+
+                                    <div class="card-row">
+
+                                        <i class="bi bi-credit-card"></i>
+
+                                        <span>
+                                            {{ maskCard(card.cardNumber) }}
+                                        </span>
+
+                                        <span [ngClass]="card.status ? 'text-success' : 'text-danger'">
+                                            {{ card.status ? 'Active' : 'Inactive' }}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+                                <div *ngIf="selectedCardStatus === 0" class="text-danger mt-2">
+                                    This card is inactive. Blocking is not allowed.
+                                </div>
+
+                            </div>
+
+                            <div class="modal-footer">
+
+                                <button class="btn btn-danger" [disabled]="selectedCardStatus === 0"
+                                    (click)="blockOrUnblockCard(selectedCardId,0)" [disabled]="!selectedCardStatus">
+                                    Block Card
+                                </button>
+
+                            </div>
+
+                        </form>
+
+
+
+                        <!-- UNBLOCK CARD -->
+
+                        <form *ngIf="selectedForm === 'unblock'">
+
+                            <strong>Select Card to Unblock</strong>
+
+                            <div class="card-list">
+
+                                <div *ngFor="let card of cards" class="card-option" (click)="selectCard(card)"
+                                    [class.selected]="selectedCardId === card.cardId">
+
+                                    <div class="card-row">
+
+                                        <i class="bi bi-credit-card"></i>
+
+                                        <span>
+                                            {{ maskCard(card.cardNumber) }}
+                                        </span>
+
+                                        <span [ngClass]="card.status ? 'text-success' : 'text-danger'">
+                                            {{ card.status ? 'Active' : 'Inactive' }}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+                                <div *ngIf="selectedCardStatus === 1" class="text-danger mt-2">
+                                    This card is already active.
+                                </div>
+
+                            </div>
+
+                            <!-- Error -->
+
+
+                            <div class="modal-footer">
+
+                                <button class="btn btn-danger" (click)="blockOrUnblockCard(selectedCardId,1)"
+                                    [disabled]="selectedCardStatus">
+                                    Unblock Card
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- WITHDRAW LIMIT MODAL -->
+
+            <div *ngIf="showLimitModal" class="blur-overlay">
+
+                <div class="limit-card p-4 card w-40">
+
+                    <div class="d-flex justify-content-center">
+
+                        <span class="title">Set Withdraw Limit</span>
+
+                        <button type="button" class="btn-close close" (click)="closeForm()">
+                        </button>
+
+                    </div>
+
+
+                    <label class="form-label fw-semibold">
+                        Select Card Number
+                    </label>
+
+
+                    <div class="card-list">
+
+                        <div *ngFor="let card of cards" class="card-option" (click)="selectCard(card)"
+                            [class.selected]="selectedCardId === card.cardId">
+
+                            <div class="card-row">
+
+                                <i class="bi bi-credit-card"></i>
+
+                                <span>
+                                    {{ maskCard(card.cardNumber) }}
+                                </span>
+
+                                <span [ngClass]="card.status ? 'text-success' : 'text-danger'">
+                                    {{ card.status ? 'Active' : 'Inactive' }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Error -->
+
+                    <div *ngIf="selectedCardStatus === 0" class="text-danger mt-2">
+                        Inactive card. Withdraw limit cannot be set.
+                    </div>
+
+
+                    <div class="mt-3 card-option" *ngIf="selectedCard && selectedCardStatus === 1">
+
+                        <label class="form-label fw-semibold">
+                            Withdraw Limit
+                        </label>
+
+                        <input type="range" [min]="100" [max]="selectedCard.cardType?.maxLimit" step="100"
+                            [(ngModel)]="withdrawLimit" class="form-range" [ngModelOptions]="{standalone: true}">
+
+
+                        <div class="d-flex justify-content-between small text-muted">
+
+                            <span>Min ₹100</span>
+
+                            <span>
+                                Max ₹{{ selectedCard.cardType?.maxLimit }}
+                            </span>
+
+                        </div>
+
+                        <div class="limit-value mt-2">
+
+                            ₹ {{ withdrawLimit }}
+
+                        </div>
+
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <button class="btn btn-primary" (click)="setWithdrawLimit()"
+                            [disabled]="!selectedCardId || selectedCardStatus === 0">
+
+                            Update Limit
+
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>

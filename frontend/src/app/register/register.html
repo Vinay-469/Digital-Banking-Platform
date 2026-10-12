@@ -1,0 +1,410 @@
+<div class="registration-wrapper min-vh-100 d-flex align-items-center py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12 col-lg-10 col-xl-8">
+
+        <div class="card main-card shadow-lg border-0 rounded-4 overflow-hidden">
+
+          <div class="card-header bg-white pt-5 pb-4 border-0">
+            <h2 class="text-center fw-bold mb-1">Create Your Account</h2>
+            <p class="text-center text-muted small">Fill all form fields to move to the next step</p>
+
+            <div class="stepper-container mt-4 d-flex justify-content-between position-relative mx-auto">
+              <div class="stepper-line"></div>
+
+              <div class="step-item" [class.active]="showBranchForm" [class.completed]="!showBranchForm">
+                <div class="step-circle shadow-sm"><i class="bi bi-building"></i></div>
+                <div class="step-label">Branch</div>
+              </div>
+
+              <div class="step-item" [class.active]="showUserForm && !showAddressForm && !showKycForm">
+                <div class="step-circle shadow-sm"><i class="bi bi-person"></i></div>
+                <div class="step-label">Account</div>
+              </div>
+
+              <div class="step-item" [class.active]="showAddressForm">
+                <div class="step-circle shadow-sm"><i class="bi bi-geo-alt"></i></div>
+                <div class="step-label">Address</div>
+              </div>
+
+              <div class="step-item" [class.active]="showKycForm">
+                <div class="step-circle shadow-sm"><i class="bi bi-shield-check"></i></div>
+                <div class="step-label">Finish</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-body px-4 px-md-5 pb-5">
+
+            <div *ngIf="showBranchForm" [formGroup]="branchForm" class="step-content animate-in">
+              <h4 class="">Select Nearest Branch</h4>
+              <div class="row g-4 mt-2">
+                <div class="d-flex flex-column">
+                  <mat-form-field appearance="outline" class="w-50 small-field pt-0">
+                    <mat-label>Select Branch City</mat-label>
+                    <mat-select formControlName="city" (selectionChange)="onCitySelected()">
+                      <mat-option value="">-- Select City --</mat-option>
+                      <mat-option *ngFor="let city of branchCities" [value]="city">
+                        {{ city }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <small *ngIf="branchForm.get('city')?.touched 
+              && branchForm.get('city')?.invalid" class="text-danger">
+                    <span *ngIf="branchForm.get('city')?.hasError('required')">
+                      Branch city is required
+                    </span>
+                  </small>
+
+                  <mat-form-field appearance="outline" class="w-50 small-field mt-4 pt-2">
+                    <mat-label>Select Branch Location</mat-label>
+                    <mat-select formControlName="location">
+                      <mat-option value="">-- Select Location --</mat-option>
+                      <mat-option *ngFor="let loc of branchLocations" [value]="loc">
+                        {{ loc }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <small *ngIf="branchForm.get('location')?.touched 
+              && branchForm.get('location')?.invalid" class="text-danger">
+                    <span *ngIf="branchForm.get('location')?.hasError('required')">
+                      Branch location is required
+                    </span>
+                  </small>
+
+                </div>
+              </div>
+              <div class="text-end mt-4">
+                <button class="btn btn-next px-5 py-2" (click)="continueFromBranch()">Next Step</button>
+              </div>
+            </div>
+
+            <form *ngIf="showUserForm && !showAddressForm && !showKycForm" [formGroup]="userForm"
+              class="step-content animate-in">
+              <h4 class="section-title">Account Information</h4>
+              <div class="d-flex justify-content-evenly">
+
+            <!-- LEFT SIDE -->
+            <div class="ps-5 w-55">
+
+              <!-- Full Name -->
+              <mat-form-field appearance="outline" class="small-field w-100 pt-4">
+                <mat-label>Full Name</mat-label>
+                <input matInput formControlName="fullName">
+              </mat-form-field>
+              <small *ngIf="userForm.get('fullName')?.touched" class="text-danger">
+                <span *ngIf="userForm.get('fullName')?.hasError('required')">Full name is required</span>
+                <span *ngIf="userForm.get('fullName')?.hasError('pattern')">Only alphabets allowed</span>
+                <span *ngIf="userForm.get('fullName')?.errors?.['whitespace']">Full Name cannot contain only
+                  spaces</span>
+              </small>
+
+              <!-- Email -->
+              <mat-form-field appearance="outline" class="small-field w-100 pt-3">
+                <mat-label>Email</mat-label>
+                <input matInput formControlName="email">
+              </mat-form-field>
+
+              <small *ngIf="userForm.get('email')?.touched" class="text-danger">
+
+                <!-- Required -->
+                <span *ngIf="userForm.get('email')?.hasError('required')">
+                  Email is required
+                </span>
+
+                <!-- Invalid Format -->
+                <span *ngIf="!userForm.get('email')?.hasError('required') 
+               && userForm.get('email')?.hasError('email')">
+                  Enter valid email
+                </span>
+
+                <!-- Already Exists -->
+                <span *ngIf="!userForm.get('email')?.hasError('required') 
+               && !userForm.get('email')?.hasError('email') 
+               && userForm.get('email')?.hasError('emailTaken')">
+                  Email already exists
+                </span>
+
+              </small>
+
+              <!-- Phone -->
+              <mat-form-field appearance="outline" class="small-field w-100 pt-3">
+                <mat-label>Phone</mat-label>
+                <input matInput formControlName="phone">
+              </mat-form-field>
+              <small *ngIf="userForm.get('phone')?.touched" class="text-danger">
+                <span *ngIf="userForm.get('phone')?.hasError('required')">Phone number is required</span>
+                <span *ngIf="userForm.get('phone')?.hasError('pattern')">Phone must be 10 digits</span>
+              </small>
+
+              <!-- Marital Status -->
+              <mat-form-field appearance="outline" class="small-field w-100 pt-3">
+                <mat-label>Marital Status</mat-label>
+                <mat-select formControlName="maritalStatus">
+                  <mat-option value="Single">Single</mat-option>
+                  <mat-option value="Married">Married</mat-option>
+                  <mat-option value="Other">Other</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <small *ngIf="userForm.get('maritalStatus')?.touched" class="text-danger">
+                <span *ngIf="userForm.get('maritalStatus')?.hasError('required')">
+                  Marital status is required
+                </span>
+              </small>
+
+            </div>
+
+            <!-- RIGHT SIDE -->
+            <div class="w-55">
+
+              <!-- DOB -->
+              <mat-form-field appearance="outline" class="small-field w-90 pt-4">
+                <mat-label>Date of Birth</mat-label>
+                <input matInput [matDatepicker]="dobPicker" formControlName="dateOfBirth" [max]="maxDob">
+                <mat-datepicker-toggle matSuffix [for]="dobPicker"></mat-datepicker-toggle>
+                <mat-datepicker #dobPicker></mat-datepicker>
+              </mat-form-field>
+              <small *ngIf="userForm.get('dateOfBirth')?.touched" class="text-danger">
+                <span *ngIf="userForm.get('dateOfBirth')?.hasError('required')">DOB is required</span>
+              </small>
+
+              <!-- Gender -->
+              <mat-form-field appearance="outline" class="small-field w-100 pt-3">
+                <mat-label>Gender</mat-label>
+                <mat-select formControlName="gender">
+                  <mat-option value="Male">Male</mat-option>
+                  <mat-option value="Female">Female</mat-option>
+                  <mat-option value="Other">Other</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <small *ngIf="userForm.get('gender')?.touched" class="text-danger">
+                <span *ngIf="userForm.get('gender')?.hasError('required')">Gender is required</span>
+              </small>
+
+              <!-- Occupation -->
+              <mat-form-field appearance="outline" class="small-field w-100 pt-3">
+                <mat-label>Occupation</mat-label>
+                <input matInput formControlName="occupation">
+              </mat-form-field>
+              <small *ngIf="userForm.get('occupation')?.touched" class="text-danger">
+                <span *ngIf="userForm.get('occupation')?.hasError('required')">Occupation is required</span>
+                <span *ngIf="userForm.get('occupation')?.hasError('pattern')">Only alphabets allowed</span>
+                <span *ngIf="userForm.get('occupation')?.errors?.['whitespace']">Full Name cannot contain only
+                  spaces</span>
+              </small>
+
+              <mat-form-field appearance="outline" class="small-field w-100 pt-3">
+                <mat-label>Select Account Type</mat-label>
+
+                <mat-select formControlName="accountTypeId" (selectionChange)="onAccountTypeChange($event.value)">
+
+                  <mat-option *ngFor="let type of accountTypes" [value]="type.accountTypeId">
+                    {{ type.accountTypeName }}
+                  </mat-option>
+
+                </mat-select>
+              </mat-form-field>
+
+              <small *ngIf="userForm.get('accountTypeId')?.touched" class="text-danger">
+                <span *ngIf="userForm.get('accountTypeId')?.hasError('required')">AccountTypeId is required</span>
+              </small>
+
+            </div>
+          </div>
+
+              <div class="d-flex justify-content-between mt-4">
+                <button class="btn btn-outline-secondary px-4"
+                  (click)="showBranchForm = true; showUserForm = false">Back</button>
+                <button class="btn btn-next px-5" (click)="continueToAddress()">Next Step</button>
+              </div>
+            </form>
+
+            <form *ngIf="showAddressForm && !showKycForm" [formGroup]="userForm" class="step-content animate-in">
+              <div formGroupName="address">
+                <h4 class="section-title">Contact Details</h4>
+                <div class="d-flex justify-content-evenly w-100">
+
+            <div class="d-flex flex-column ps-5 w-55">
+
+              <!-- Door Number -->
+              <mat-form-field appearance="outline" class="small-field w-100 pt-4">
+                <mat-label>Door Number</mat-label>
+                <input matInput formControlName="doorNumber">
+              </mat-form-field>
+              <small *ngIf="userForm.get('address.doorNumber')?.touched" class="text-danger">
+                <span *ngIf="userForm.get('address.doorNumber')?.hasError('required')">Door number is required</span>
+                <span *ngIf="userForm.get('address.doorNumber')?.hasError('pattern')">Invalid format</span>
+                <span *ngIf="userForm.get('address.doorNumber')?.errors?.['whitespace']">Door number cannot contain only
+                  spaces</span>
+              </small>
+
+              <!-- Landmark -->
+              <mat-form-field appearance="outline" class="small-field w-100 pt-4">
+                <mat-label>Landmark</mat-label>
+                <input matInput formControlName="landMark">
+              </mat-form-field>
+              <small *ngIf="userForm.get('address.landMark')?.touched" class="text-danger">
+                <span *ngIf="userForm.get('address.landMark')?.hasError('required')">Landmark required</span>
+                <span *ngIf="userForm.get('address.landMark')?.errors?.['whitespace']">Landmark cannot contain only
+                  spaces</span>
+              </small>
+
+              <!-- Street -->
+              <mat-form-field appearance="outline" class="small-field w-100 pt-4">
+                <mat-label>Street</mat-label>
+                <input matInput formControlName="street">
+              </mat-form-field>
+              <small *ngIf="userForm.get('address.street')?.touched" class="text-danger">
+                <span *ngIf="userForm.get('address.street')?.hasError('required')">Street required</span>
+                <span *ngIf="userForm.get('address.street')?.errors?.['whitespace']">Street cannot contain only
+                  spaces</span>
+              </small>
+
+              <!-- City -->
+              <mat-form-field appearance="outline" class="small-field w-90 pt-4">
+                <mat-label>City</mat-label>
+                <input matInput formControlName="city">
+              </mat-form-field>
+              <small *ngIf="userForm.get('address.city')?.touched" class="text-danger">
+                <span *ngIf="userForm.get('address.city')?.errors?.['whitespace']">City cannot contain only
+                  spaces</span>
+                <span *ngIf="userForm.get('address.city')?.hasError('required')">City required</span>
+              </small>
+
+            </div>
+
+            <div class="d-flex flex-column w-55">
+              <!-- Pin Code -->
+              <mat-form-field appearance="outline" class="small-field w-90 pt-4">
+                <mat-label>Pin Code</mat-label>
+                <input matInput formControlName="pinCode">
+              </mat-form-field>
+              <small *ngIf="userForm.get('address.pinCode')?.touched" class="text-danger">
+                <span *ngIf="userForm.get('address.pinCode')?.hasError('required')">Pin code required</span>
+                <span *ngIf="userForm.get('address.pinCode')?.hasError('pattern')">Enter valid 6-digit PIN</span>
+                <span *ngIf="userForm.get('address.pinCode')?.errors?.['whitespace']">Pincode cannot contain only
+                  spaces</span>
+              </small>
+
+              <mat-form-field appearance="outline" class="small-field w-90 pt-4">
+                <mat-label>District</mat-label>
+                <input matInput formControlName="district">
+              </mat-form-field>
+              <small *ngIf="userForm.get('address.district')?.touched" class="text-danger">
+                <span *ngIf="userForm.get('address.district')?.hasError('required')">
+                  District required
+                </span>
+                <span *ngIf="userForm.get('address.district')?.hasError('minlength')">
+                  Minimum 2 characters required
+                </span>
+                <span *ngIf="userForm.get('address.district')?.hasError('maxlength')">
+                  Cannot exceed 50 characters
+                </span>
+                <span *ngIf="userForm.get('address.district')?.hasError('pattern')">
+                  Only letters allowed
+                </span>
+                <span *ngIf="userForm.get('address.district')?.errors?.['whitespace']">District cannot contain only
+                  spaces</span>
+              </small>
+
+              <mat-form-field appearance="outline" class="small-field w-90 pt-4">
+                <mat-label>State</mat-label>
+                <input matInput formControlName="state">
+              </mat-form-field>
+              <small *ngIf="userForm.get('address.state')?.touched" class="text-danger">
+                <span *ngIf="userForm.get('address.state')?.hasError('required')">
+                  State required
+                </span>
+                <span *ngIf="userForm.get('address.state')?.hasError('minlength')">
+                  Minimum 2 characters required
+                </span>
+                <span *ngIf="userForm.get('address.state')?.hasError('maxlength')">
+                  Cannot exceed 50 characters
+                </span>
+                <span *ngIf="userForm.get('address.state')?.hasError('pattern')">
+                  Only letters allowed
+                </span>
+                <span *ngIf="userForm.get('address.state')?.errors?.['whitespace']">State cannot contain only
+                  spaces</span>
+              </small>
+
+              <mat-form-field appearance="outline" class="small-field w-90 pt-4">
+                <mat-label>Country</mat-label>
+                <input matInput formControlName="country">
+              </mat-form-field>
+              <small *ngIf="userForm.get('address.country')?.touched" class="text-danger">
+                <span *ngIf="userForm.get('address.country')?.hasError('required')">
+                  Country required
+                </span>
+                <span *ngIf="userForm.get('address.country')?.hasError('minlength')">
+                  Minimum 2 characters required
+                </span>
+                <span *ngIf="userForm.get('address.country')?.hasError('maxlength')">
+                  Cannot exceed 50 characters
+                </span>
+                <span *ngIf="userForm.get('address.country')?.hasError('pattern')">
+                  Only letters allowed
+                </span>
+                <span *ngIf="userForm.get('address.country')?.errors?.['whitespace']">Country cannot contain only
+                  spaces</span>
+              </small>
+            </div>
+          </div>
+
+              </div>
+              <div class="d-flex justify-content-between mt-4">
+                <button class="btn btn-outline-secondary px-4" (click)="goBackToBasic()">Back</button>
+                <button class="btn btn-next px-5" (click)="continueToKyc()">Next Step</button>
+              </div>
+            </form>
+
+            <form *ngIf="showKycForm && !successMessage" [formGroup]="userForm"
+              class="step-content animate-in text-center">
+              <div formGroupName="kyc">
+                <h4 class="section-title text-start">Identity Verification</h4>
+                <div class="row justify-content-center mt-3">
+                  <div class="col-md-8">
+                    <mat-form-field appearance="outline" class="w-100 mb-2">
+                      <mat-label>PAN Number</mat-label>
+                      <input matInput formControlName="panNumber" placeholder="DEMO-PAN-001">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="w-100">
+                      <mat-label>Aadhaar Number</mat-label>
+                      <input matInput formControlName="adhaarNumber" placeholder="12-digit number">
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex justify-content-between mt-4">
+                <button class="btn btn-outline-secondary px-4" (click)="goBackToAddress()">Back</button>
+                <button class="btn btn-success btn-submit px-5" (click)="onSubmit()">Submit Application</button>
+              </div>
+            </form>
+
+            <div *ngIf="successMessage" class="success-content text-center animate-in py-4">
+              <div class="success-icon-box mb-4">
+                <i class="bi bi-check-lg"></i>
+              </div>
+              <h3 class="fw-bold text-success">Account Created Successfully!</h3>
+              <p class="text-muted">You're all set. Use the credentials below to log in.</p>
+
+              <div class="credential-card mx-auto my-4 p-3 shadow-sm rounded-3">
+                <div class="d-flex justify-content-between mb-2">
+                  <span class="text-muted">Username:</span>
+                  <span class="fw-bold text-primary">{{ username }}</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span class="text-muted">Password:</span>
+                  <span class="fw-bold text-danger">{{ password }}</span>
+                </div>
+              </div>
+
+              <a routerLink="/login" class="btn btn-primary rounded-pill px-5 py-2 mt-2">Go to Login</a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

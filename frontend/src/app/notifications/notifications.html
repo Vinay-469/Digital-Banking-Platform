@@ -1,0 +1,63 @@
+<div class="pt-6 notification-container">
+
+  <div class="header">
+    <h2 class="text-bank">Notifications</h2>
+  </div>
+  <div class="d-flex align-items-center justify-content-between bg-primary bg-opacity-10 rounded mb-3 px-3">
+    <div class="tabs">
+
+      <div class="tab" [class.active]="filter === -1" (click)="setFilter(-1)">
+        All ({{notifications.length}})
+      </div>
+
+      <div class="tab" [class.active]="filter === 0" (click)="setFilter(0)">
+        Unread ({{unreadCount}})
+      </div>
+
+      <div class="tab" [class.active]="filter === 1" (click)="setFilter(1)">
+        Read ({{readCount}})
+      </div>
+    </div>
+    <button *ngIf="filter!=1" class="mark-all" (click)="markAllAsRead()">
+      Mark all as read
+    </button>
+  </div>
+
+  <!-- EMPTY STATE -->
+  <div class="empty" *ngIf="filteredNotifications.length === 0">
+    <h3>No notifications</h3>
+    <p>You’re all caught up</p>
+  </div>
+
+  <!-- NOTIFICATIONS LIST -->
+  <div class="list">
+
+    <div class="card d-flex flex-row" *ngFor="let n of filteredNotifications" [class.unread]="!n.isRead">
+
+      <!-- ICON -->
+      <div class="icon">
+        <span *ngIf="n.type === 'Card'" class="bi bi-credit-card-fill text-primary "></span>
+        <span *ngIf="n.type.toLowerCase().includes('alert')"
+          class="bi bi-exclamation-triangle-fill text-warning"></span>
+        <span *ngIf="n.type === 'info'" class="bi bi-info-circle-fill text-info"></span>
+      </div>
+
+      <!-- CONTENT -->
+      <div class="content">
+        <h4>{{n.title}}</h4>
+        <p>{{n.message}}</p>
+        <span class="time">{{n.createdAt | date:'dd/MMM yyyy | hh:mm a'}}</span>
+      </div>
+
+      <!-- ACTION -->
+      <div class="actions">
+        <button *ngIf="!n.isRead" (click)="markAsRead(n)">
+          Mark as read
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

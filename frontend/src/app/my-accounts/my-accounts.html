@@ -1,0 +1,296 @@
+<div class="container pt-6">
+  <div class="d-flex justify-content-between align-items-center mb-4 p-3 border rounded shadow bg-light border-primary">
+
+    <div class="d-flex align-items-center justify-content-between w-100">
+      <div class="d-flex align-items-center">
+        <div class="bg-bank text-white rounded-circle d-flex justify-content-center align-items-center me-3"
+          style="width:50px;height:50px;">
+          <i class="bi bi-bank fs-4"></i>
+        </div>
+        <div>
+          <h4 class="mb-0">Bank Account Details</h4>
+          <small class="badge bg-success">
+            {{ (accounts | async)?.length || 0 }} Accounts
+          </small>
+        </div>
+      </div>
+      <div class="pt-3"> <button *ngIf="accountTypes.length" class="btn btn-primary mb-3" (click)="showDropdown = true">
+          Apply for Account </button>
+        <div *ngIf="showDropdown" class="blur-overlay">
+          <div class=" card p-3 shadow-sm col-md-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h5 class="text-center pt-2 w-100 ms-3">Select Account Type</h5> <button class="btn-close"
+                (click)="closeDropdown()"></button>
+            </div>
+            <div class="card p-3">
+              <h5 class="text-center"> Your details</h5> <small><strong>Name: </strong>{{user?.fullName}}</small>
+              <small><strong>Phone: </strong>{{user?.phone}}</small> <small><strong>Email:
+                </strong>{{user?.email}}</small>
+              <small><strong>Adhaar number: </strong>{{user?.kyc?.adhaarNumber}}</small>
+            </div> <label class="form-label"></label> <select class="form-select mt-2"
+              [(ngModel)]="selectedAccountTypeId">
+              <option [ngValue]="null"> -- Select Account Type -- </option>
+              <option *ngFor="let acc of accountTypes" [value]="acc.accountTypeId"> {{ acc.accountTypeName }} </option>
+            </select> <button class="btn btn-success mt-3 w-100" [disabled]="!selectedAccountTypeId"
+              (click)="createAccount()"> Continue </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="pageError" class="alert alert-danger"> {{ pageError }} </div>
+</div>
+
+<!-- set Threshold  -->
+<div *ngIf="showThresholdCard" class="blur-overlay">
+  <div class="card shadow-lg p-4 w-25">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="mb-0"> <i class="bi bi-sliders me-2 text-primary"></i> Set Custom Threshold </h5> <i
+        class="bi bi-x-lg close-icon" (click)="closeThreshold()"></i>
+    </div>
+    <hr>
+    <div *ngIf="selectedAccount">
+      <p> <b>Account Number:</b> {{ selectedAccount.accountNumber }} </p>
+      <div class="mb-3"> <label class="form-label fw-semibold">Current Threshold</label> <input type="text"
+          class="form-control" [value]="'₹ ' + selectedAccount.customThreshold" disabled> </div>
+      <div class="mb-3"> <label class="form-label fw-semibold">New Threshold</label> <input type="range"
+          [min]='threshold' max="100000" step="100" [(ngModel)]="newThreshold" class="form-range form-control" />
+        <div class="slider-value"> ₹ {{ newThreshold }} </div>
+      </div>
+      <div class="d-grid"> <button class="btn btn-primary" (click)="updateThreshold(selectedAccount.accountId!)"> Update
+        </button> </div>
+    </div>
+  </div>
+</div>
+
+<!-- Apply for new account -->
+
+
+<div class="container pt-3">
+  <div *ngIf="(accounts | async) as accountList; else noData">
+    <div *ngIf="accountList.length === 0" class="alert alert-info">
+      No accounts found
+    </div>
+    <div class="row g-4">
+      <div *ngFor="let acc of accountList" class="col-md-4">
+        <div class="card border shadow h-100 border-primary hover-card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center bg-primary bg-opacity-10 rounded px-2 py-1">
+              <span class="d-flex justify-content-between"><i class="bi bi-credit-card fs-5 text-primary"></i>
+                <h5 class="fw-bold ps-2 pt-1">{{ acc.accountNumber }}</h5>
+              </span>
+              <div *ngIf="acc.accountStatus===1" class="dropdown">
+
+                <!-- 3 DOT ICON -->
+                <div *ngIf="acc.accountStatus===1" class="dropdown">
+
+                  <!-- 3 DOT ICON -->
+                  <i class="ps-3 pb-3 bi bi-three-dots-vertical fs-5" data-bs-toggle="dropdown" style="cursor:pointer">
+                  </i>
+
+                  <!-- MENU -->
+                  <ul class="dropdown-menu dropdown-menu-end shadow-sm p-2">
+
+                    <!-- MORE DETAILS -->
+                    <li>
+                      <button class="dropdown-item" (click)="selectAccount(acc)">
+                        <i class="bi bi-info-circle me-2"></i> More Details
+                      </button>
+                    </li>
+
+                    <!-- ACCOUNT CONTROLS -->
+                    <li class="position-relative">
+
+                      <!-- HIDDEN CHECKBOX -->
+                      <input type="checkbox" id="ctrl-{{acc.accountId}}" class="submenu-toggle d-none">
+
+                      <!-- ACCOUNT CONTROLS (ONLY THIS LABEL OPENS) -->
+                      <label for="ctrl-{{acc.accountId}}"
+                        class="dropdown-item d-flex justify-content-between align-items-center"
+                        (click)="$event.stopPropagation()">
+
+                        <span>
+                          <i class="bi bi-gear me-2"></i> Account Controls
+                        </span>
+
+                        <i class="bi bi-chevron-down"></i>
+                      </label>
+
+                      <!-- SUBMENU -->
+                      <div class="submenu ps-3 mt-1" (click)="$event.stopPropagation()">
+
+                        <!-- Lock -->
+                        <label for="ctrl-{{acc.accountId}}" class="w-100">
+                          <div class="dropdown-item" (click)="updateAccountStatus(acc,1,acc.balance)">
+                            <i class="bi bi-lock me-2"></i> Lock
+                          </div>
+                        </label>
+
+                        <!-- Unlock -->
+                        <label for="ctrl-{{acc.accountId}}" class="w-100">
+                          <div class="dropdown-item" (click)="updateAccountStatus(acc,0,acc.balance)">
+                            <i class="bi bi-unlock me-2"></i> Unlock
+                          </div>
+                        </label>
+
+                        <!-- Deactivate -->
+                        <label for="ctrl-{{acc.accountId}}" class="w-100">
+                          <div class="dropdown-item text-danger" (click)="updateAccountStatus(acc,2,acc.balance)">
+                            <i class="bi bi-x-circle me-2"></i> Deactivate
+                          </div>
+                        </label>
+
+                      </div>
+
+                    </li>
+                  </ul>
+
+                </div>
+              </div>
+            </div>
+            <div class="d-flex justify-content-between pt-2">
+              <small class="text-muted">{{ acc.accountTypeName }}</small>
+              <small class="badge" [ngClass]="{
+                  'bg-success': acc.accountStatus === 1 && acc.isLocked === 0,
+                  'bg-warning text-dark': acc.isLocked === 1,
+                  'bg-danger': acc.accountStatus === 0 || acc.isLocked === 2
+                }">
+                {{ acc.isLocked === 2 ? 'Deactivated' :
+                acc.isLocked === 1 ? 'Locked' :
+                acc.accountStatus === 1 ? 'Active' : 'Inactive' }}
+              </small>
+            </div>
+            <div class="mt-3">
+              <small class="text-muted">Available Balance</small>
+              <h4 class="fw-bold">
+                {{ balanceVisible[acc.accountId] ? ('₹ ' + balanceValue[acc.accountId]) : '₹ ******' }}
+                <i *ngIf="acc.accountStatus === 1 && acc.isLocked===0" class="bi ms-2"
+                  [ngClass]="balanceVisible[acc.accountId] ? 'bi-eye text-success' : 'bi-eye-slash text-secondary'"
+                  (click)="viewBalance(acc.accountId); $event.stopPropagation()" style="cursor:pointer">
+                </i>
+              </h4>
+            </div>
+            <div *ngIf="showPinInput[acc.accountId]" class="mt-2">
+              <input type="password" maxlength="4" class="form-control form-control-sm mb-2" placeholder="Enter PIN"
+                [(ngModel)]="pinValue[acc.accountId]" />
+              <small class="text-danger " *ngIf="errorMessage[acc.accountId]">
+                {{ errorMessage[acc.accountId] }}
+              </small>
+              <button class="btn btn-success btn-sm w-100" (click)="submitPin(acc.accountId)">
+                Submit
+              </button>
+            </div>
+          </div>
+          <div class="card-footer bg-white border-0 d-flex justify-content-between">
+            <button class="btn btn-sm btn-outline-primary" (click)="openMiniStatement(acc.accountId)">
+              Statement
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noData>
+    <div class="alert alert-info">No accounts found</div>
+  </ng-template>
+
+</div>
+
+<div *ngIf="displayAccount" class="container mt-4 mb-5">
+  <div class="card shadow-lg border-0">
+    <div class="card-header bg-bank text-white d-flex justify-content-between align-items-center" style="opacity: 75%;">
+      <h5 class="mb-0">
+        <i class="bi bi-credit-card me-2"></i>
+        Account Details -{{ displayAccount.accountNumber }}
+      </h5>
+      <button class="btn btn-sm" (click)="closeDetails()">
+        <i class="bi bi-x-lg text-light"></i>
+      </button>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-4 mt-4 ms-3">
+          <p class="mb-2">
+            <i class="bi bi-person-fill me-2 text-secondary"></i>
+            <b>Account holder:</b> {{ user?.fullName }}
+          </p>
+          <p class="mb-2">
+            <i class="bi bi-envelope-fill me-2 text-secondary"></i>
+            <b>Email:</b> {{ user?.email }}
+          </p>
+          <p class="mb-2">
+            <i class="bi-telephone-fill me-2 text-secondary"></i>
+            <b>Phone:</b> {{ user?.phone }}
+          </p>
+          <p class="mb-2">
+            <img src="/assets/india.png" alt="pan card logo" style="width: 18px;opacity: 50%;margin-right: 7px;">
+            <b>Adhaar nuumber:</b> {{ user?.kyc?.adhaarNumber }}
+          </p>
+          <p class="mb-2">
+            <img src="/assets/business-card.png" alt="pan card logo"
+              style="width: 18px;opacity: 50%;margin-right: 7px;">
+            <b>PAN:</b> {{ user?.kyc?.panNumber }}
+          </p>
+        </div>
+        <div class="col-md-3 mt-4">
+          <p class="mb-2">
+            <i class="bi bi-building-fill me-2 text-secondary"></i>
+            <b>Branch Name:</b> {{ displayAccount.branchName }}
+          </p>
+          <p class="mb-2">
+            <i class="bi bi-geo-alt-fill me-2 text-secondary"></i>
+            <b>Branch City:</b> {{ displayAccount.city }}
+          </p>
+          <p class="mb-2">
+            <i class="bi bi-search me-2 text-secondary"></i>
+            <b>IFSC Code:</b> {{ displayAccount.ifscCode }}
+          </p>
+          <p class="mb-2">
+            <i class="bi bi-percent me-2 text-secondary"></i>
+            <b>Interest Rate:</b> {{ displayAccount.interestRate }}%
+          </p>
+          <p class="mb-2">
+            <i class="bi bi-sliders me-2 text-secondary"></i>
+            <b>Custom Threshold:</b> ₹ {{ displayAccount.customThreshold }}
+            <i *ngIf="displayAccount.accountStatus === 1 && displayAccount.isLocked===0"
+              class="bi bi-pencil-square text-primary ms-2" style="cursor:pointer"
+              (click)="setThreshold(displayAccount); $event.stopPropagation()">
+            </i>
+          </p>
+        </div>
+        <div class="col-md-4">
+          <div *ngIf="qrImage" class="qr-box1">
+            <!-- DOWNLOAD BUTTON -->
+            <div #qrContainer class="qr-card d-flex flex-column align-items-center shadow py-2 bg-primary bg-opacity-10 rounded">
+
+              <span class="d-flex gap-2 align-items-center justify-content-center mb-1">
+                <img src="/assets/icon.jpg" style="width:20px;border-radius:50%;">
+                <strong>EndavaBank</strong>
+              </span>
+
+              <img class="img" [src]="qrImage" />
+
+              <small class="mt-1"><strong>{{displayAccount.fullName}}</strong></small>
+
+            </div>
+
+            <img src="/assets/download.png" class="download" (click)="downloadQR(displayAccount.fullName)">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="overlay" *ngIf="showMiniStatement">
+  <div class="modal-box">
+    <h3>Mini Statement</h3>
+    <label>From Date</label> <input type="date" [(ngModel)]="miniForm.fromDate" /> <label>To Date</label>
+    <input type="date" [max]="today" [(ngModel)]="miniForm.toDate" />
+    <div class="actions"> <button class="btn1 btn1-success" [disabled]="!miniForm.fromDate || !miniForm.toDate"
+        (click)="downloadMiniStatement()">Download </button>
+      <button class="btn1 btn1-secondary" (click)="closeMiniStatement()"> Cancel </button>
+    </div>
+  </div>
+</div>
+<div class="container">

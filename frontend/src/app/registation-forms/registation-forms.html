@@ -1,0 +1,146 @@
+<div class="pb-5 vh-95">
+  <div class="pt-5 ps-1" *ngIf="showTable">
+    <img (click)="router.navigate(['home'])" src="/assets/back.jpg" alt="back button" style="width: 55px"
+      class="ps-3 pt-2 back">
+    <h3 class="text-center">Pending Applications</h3>
+    <div *ngIf="showTable" class="container mt-4">
+
+      <div *ngIf="dataSource.data.length === 0" class="text-center">
+        <h5 class="text-danger">No Pending Applications</h5>
+      </div>
+
+      <div class="row">
+
+        <div class="col-md-6 col-lg-4 mb-4" *ngFor="let account of dataSource.data">
+
+          <div class="card shadow-lg border-0 rounded-4 applicant-card h-100">
+
+            <div class="card-body">
+
+              <!-- Name -->
+              <h5 class="card-title fw-bold text-primary">
+                {{ account.user.fullName }}
+              </h5>
+
+              <hr>
+
+              <p class="mb-2">
+                <strong>Mobile:</strong>
+                {{ account.user.phone }}
+              </p>
+
+              <p class="mb-3">
+                <strong>Email:</strong>
+                {{ account.user.email }}
+              </p>
+
+              <p class="mb-3">
+                <strong>Account Type:</strong>
+                {{ account.accountType.accountTypeName }}
+              </p>
+
+              <div class="text-end">
+                <button (click)="viewDetails(account)" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                  View Details
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <div class="d-flex" *ngIf="!showTable && selectedUser">
+    <span><img (click)="closeDetails()" src="assets/back.jpg" alt="back button" style="width: 55px; padding-top: 3.5rem;"
+      class="ms-1 ps-3 back"></span>
+    <div class="container pt-6">
+
+      <div class="card shadow-lg border-0 rounded-4 p-2 applicant-details">
+
+        <div class="text-center mb-1">
+          <!-- <div class="profile-circle mx-auto mb-2">
+        {{ selectedUser.user.fullName.charAt(0) }}
+      </div> -->
+          <h3 class="fw-bold mb-0">{{ selectedUser.user.fullName }}</h3>
+          <small class="text-muted">
+            {{ selectedUser.accountType.accountTypeName }}
+          </small>
+        </div>
+
+        <div class="row">
+
+          <!-- Personal Info -->
+          <div class="col-md-6 ">
+            <div class="info-box p-3 rounded-3 shadow-sm h-100">
+              <h5 class="mb-3 text-primary">Personal Information</h5>
+              <p><strong>Email:</strong> {{ selectedUser.user.email }}</p>
+              <p><strong>Phone:</strong> {{ selectedUser.user.phone }}</p>
+              <p><strong>Gender:</strong> {{ selectedUser.user.gender || '-' }}</p>
+              <p><strong>Date of Birth:</strong>
+                {{ selectedUser.user.dateOfBirth | date:'dd MMM yyyy' }}
+              </p>
+              <p><strong>Marital Status:</strong>
+                {{ selectedUser.user.maritalStatus || '-' }}
+              </p>
+            </div>
+          </div>
+
+          <!-- KYC & Account Info -->
+          <div class="col-md-6 ">
+            <div class="info-box p-3 rounded-3 shadow-sm h-100">
+              <h5 class="mb-3 text-success">KYC & Account Details</h5>
+              <p><strong>Aadhaar:</strong>
+                {{ selectedUser.user.kyc.adhaarNumber || '-' }}
+              </p>
+              <p><strong>PAN:</strong>
+                {{ selectedUser.user.kyc.panNumber || '-' }}
+              </p>
+              <p><strong>Occupation:</strong>
+                {{ selectedUser.user.occupation || '-' }}
+              </p>
+              <p><strong>Date of Application:</strong>
+                {{ selectedUser.user.dateJoined | date:'dd MMM yyyy' }}
+              </p>
+              <p><strong>Interest Rate:</strong>
+                {{ selectedUser.accountType.interestRate }}%
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Address -->
+        <div class="info-box p-3 rounded-3 shadow-sm mt-1">
+          <h5 class="mb-3 text-dark">Address</h5>
+          <p>
+            {{ selectedUser.user.address.doorNumber }},
+            {{ selectedUser.user.address.street }},
+            {{ selectedUser.user.address.city }},
+            {{ selectedUser.user.address.state }},
+            {{ selectedUser.user.address.country }}
+          </p>
+        </div>
+
+        <!-- Buttons -->
+        <div class="text-center pt-3">
+          <button mat-raised-button color="primary" class="px-4 rounded-pill" (click)="updateStatus(selectedUser.accountId, 1,
+          selectedUser.user.userId,
+          selectedUser.accountType.accountTypeId,
+          selectedUser.accountType.accountTypeName)">
+            Approve
+          </button>
+
+          <button mat-raised-button color="warn" class="ms-3 px-4 rounded-pill" (click)="updateStatus(selectedUser.accountId, -1,
+          selectedUser.user.userId,
+          selectedUser.accountType.accountTypeId,
+          selectedUser.accountType.accountTypeName)">
+            Reject
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>

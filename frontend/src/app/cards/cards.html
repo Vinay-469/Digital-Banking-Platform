@@ -1,0 +1,89 @@
+<div class="pt-5">
+    <h4 class="bg-warning bg-opacity-10 p-2">Card Services</h4>
+    <div class="row pt-4 ms-5">
+        <div class="col-md-5 mb-4 ms-5">
+            <div class="card shadow h-100 ms-4">
+                <div class="card-body text-center">
+                    <div>
+                        <img src="/assets/Debit Card.png" alt="debit card template" class="w-52">
+                    </div>
+                    <p class="card-text fs-6 pb-3">
+                        Access your account directly with a debit card <br>
+                        and make cashless payments effortlessly
+                    </p>
+                    <button class="btn btn-success" (click)="applyDebitCard()">
+                        Apply Debit Card
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-body text-center">
+                    <img src="/assets/Credit Card.png" alt="credit card template" class="w-50">
+                    <p class="card-text fs-6 pb-3">
+                        Enjoy flexible spending with a credit card and <br>
+                        unlock the potential to increase your cibil score
+                    </p>
+                    <button class="btn btn-warning" (click)="applyCreditCard()">
+                        Apply Credit Card
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="blur-overlay" *ngIf="showApplyCard && savingsAccountNumber">
+    <div class="card shadow mt-4 p-4 w-40">
+        <h5 class="mb-3">Debit Card Application</h5>
+        <form #cardForm="ngForm">
+            <div class="mb-3">
+                <label class="form-label">Savings Account Number</label>
+                <input type="text" class="form-control" [value]="savingsAccountNumber" disabled>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Card Type</label>
+                <select class="form-select" name="cardType" [(ngModel)]="selectedCardType" #cardType="ngModel" required
+                    [class.is-invalid]="cardType.invalid && cardType.touched">
+                    <option value="">Select Card Type</option>
+                    <option value="Visa">Visa</option>
+                    <option value="MasterCard">MasterCard</option>
+                    <option value="RuPay">RuPay</option>
+                </select>
+                <div class="text-danger mt-1" *ngIf="cardType.invalid && cardType.touched">
+                    Card type is required.
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Communication Address</label>
+                <textarea class="form-control" rows="3" name="address" [(ngModel)]="address" #addr="ngModel" required
+                    minlength="10" pattern=".*\S.*" placeholder="Enter your address"
+                    [class.is-invalid]="addr.invalid && addr.touched">
+        </textarea>
+                <div class="text-danger mt-1" *ngIf="addr.invalid && addr.touched">
+                    <div *ngIf="addr.errors?.['required']">
+                        Address is required.
+                    </div>
+                    <div *ngIf="addr.errors?.['minlength']">
+                        Address must be at least 10 characters.
+                    </div>
+                    <div *ngIf="addr.errors?.['pattern']">
+                        Address cannot be only spaces.
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-around">
+                <button type="button" class="btn btn-outline-primary w-25" (click)="closeApply(cardForm)">
+                    Cancel
+                </button>
+                <button type="button" class="btn btn-primary w-25" (click)="apply(cardForm)">
+                    Submit
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

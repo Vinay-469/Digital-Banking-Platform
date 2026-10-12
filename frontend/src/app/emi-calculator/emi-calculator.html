@@ -1,0 +1,112 @@
+<div class="emi-wrapper pt-6 d-flex flex-column">
+
+    <div class="emi-card">
+
+        <h2 class="title">EMI Calculator</h2>
+
+        <!-- Tabs -->
+
+
+        <div class="row mt-4">
+
+            <!-- ================= LEFT ================= -->
+            <div class="col-md-7">
+                <div class="tabs">
+                    <button [class.active]="loanType==='home'" (click)="selectLoan('home')">Home</button>
+                    <button [class.active]="loanType==='personal'" (click)="selectLoan('personal')">Personal</button>
+                    <button [class.active]="loanType==='car'" (click)="selectLoan('car')">Car</button>
+                </div>
+                <!-- Loan Amount -->
+                <!-- ================= LOAN AMOUNT ================= -->
+                <div class="input-card">
+                    <label>Loan Amount</label>
+
+                    <div class="range-row">
+                        <small>{{ minAmount | number }}</small>
+
+                        <input type="range" [min]="minAmount" [max]="maxAmount" step="1000" [(ngModel)]="loanAmount"
+                            (input)="calculateEMI()">
+
+                        <small>{{ maxAmount | number }}</small>
+
+                        <input type="number" [(ngModel)]="loanAmount" (input)="calculateEMI()" class="text-center">
+                    </div>
+                </div>
+
+                <!-- ================= INTEREST ================= -->
+                <div class="input-card">
+                    <label>Interest Rate (%)</label>
+
+                    <div class="range-row">
+                        <small>{{ minInterest }}%</small>
+
+                        <input type="range" [min]="minInterest" [max]="maxInterest" step="0.1"
+                            [(ngModel)]="interestRate" (input)="calculateEMI()">
+
+                        <small>{{ maxInterest }}%</small>
+
+                        <input type="number" [(ngModel)]="interestRate" (input)="calculateEMI()" class="text-center">
+                    </div>
+                </div>
+
+                <!-- ================= TENURE ================= -->
+                <div class="input-card">
+                    <label>Tenure (Years)</label>
+
+                    <div class="range-row">
+                        <small>1</small>
+
+                        <input type="range" [min]="1" [max]="maxTenure" [(ngModel)]="tenure" (input)="calculateEMI()">
+
+                        <small>{{ maxTenure }}</small>
+
+                        <input type="number" [(ngModel)]="tenure" (input)="calculateEMI()" class="text-center">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= RIGHT ================= -->
+            <div class="col-md-5">
+
+                <div class="charts">
+
+                    <!-- Doughnut -->
+                    <div class="chart-box" style="width: 250px;">
+                        <canvas #pieChart></canvas>
+                    </div>
+                </div>
+                <div class="result-card px-2 py-1">
+                    <!-- ================= CHARTS ================= -->
+                    <div class="result-details">
+                        <p>
+                            Monthly EMI
+                            <span>₹ {{ emi | number }}</span>
+                        </p>
+
+                        <p>
+                            Principle Amount
+                            <span>₹ {{ loanAmount | number }}</span>
+                        </p>
+
+                        <p>
+                            Total Interest
+                            <span>₹ {{ totalInterest | number }}</span>
+                        </p>
+
+                        <p>
+                            Total Payment
+                            <strong>₹ {{ totalPayment | number }}</strong>
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="chart-box my-4" style="width: 79.5%;">
+        <canvas #lineChart></canvas>
+    </div>
+</div>

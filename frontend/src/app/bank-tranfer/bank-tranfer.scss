@@ -1,0 +1,263 @@
+
+
+/* RESULT */
+.result1 {
+  margin-top: 15px;
+  padding: 10px;
+  background: #f1f5f9;
+  border-radius: 8px;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+  margin: 0;
+  padding: 40px;
+  text-align: center;
+}
+
+h1 {
+  margin-bottom: 40px;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  gap: 80px;
+  flex-wrap: wrap;
+}
+
+.card1 {
+  width: 220px;
+  background: #fff;
+  border-radius: 30px;
+  padding: 3px 2px 5px;
+  position: relative;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(to right, #f8fafc, #eef2f7);
+}
+
+/* Heading */
+.heading {
+    text-align: center;
+    margin: 40px 0;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Layout */
+.container {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+/* Card Base */
+.card1 {
+    width: 260px;
+    padding: 30px 25px;
+    border-radius: 20px;
+    background: #fff;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+/* Hover Effect 🔥 */
+.card1:hover {
+    transform: translateY(-10px) scale(1.03);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+/* Icon */
+.icon {
+    font-size: 40px;
+    margin-bottom: 15px;
+}
+
+/* Titles */
+.card1 h3 {
+    margin: 10px 0;
+    font-weight: 600;
+}
+
+/* Description */
+.card1 p {
+    font-size: 13px;
+    color: #666;
+}
+
+/* Arrow */
+.arrow {
+    position: absolute;
+    bottom: 15px;
+    right: 20px;
+    font-size: 18px;
+    opacity: 0.7;
+    transition: 0.3s;
+}
+
+.card1:hover .arrow {
+    transform: translateX(5px);
+    opacity: 1;
+}
+
+/* Green Theme */
+.green {
+    border-top: 5px solid #0f6a5c;
+}
+
+.green .icon {
+    color: #0f6a5c;
+}
+
+/* Orange Theme */
+.orange {
+    border-top: 5px solid #3326cb;
+}
+
+.orange .icon {
+    color: #3326cb;
+}
+
+.title {
+  height: 45px;
+}
+
+.desc {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.5;
+}
+// #qr-reader {
+//   width: 300px;
+//   margin: auto;
+// }
+
+// /* Fix blur */
+// #qr-reader video {
+//   width: 100% !important;
+//   height: auto !important;
+//   border-radius: 10px;
+// }
+
+// /* Simple card */
+// .pointer {
+//   cursor: pointer;
+//   border: 1px solid #ddd;
+//   border-radius: 10px;
+//   transition: 0.3s;
+// }
+
+// .pointer:hover {
+//   background: #f5f5f5;
+// }
+
+/* Full screen layout */
+.scanner-page {
+  position: relative;
+  width: 28%;
+  margin-top: 200px;
+  height: 0;
+  background: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Scanner container */
+.scanner-box {
+  position: relative;
+  width: 320px;
+  height: 320px; aspect-ratio: 1 / 1;   /* ✅ 1:1 ratio */
+}
+
+/* Camera */
+#qr-reader {
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+/* Fix blur */
+#qr-reader video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+}
+
+/* Dark overlay */
+.overlay {
+  position: absolute;
+  // pointer-events: none;
+}
+
+/* Scan area */
+.scan-area {
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Corners */
+.corner {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border: 5px solid orange;
+}
+
+.tl {
+  top: 0;
+  left: 0;
+  border-right: none;
+  border-bottom: none;
+}
+
+.tr {
+  top: 0;
+  right: 0;
+  border-left: none;
+  border-bottom: none;
+}
+
+.bl {
+  bottom: 0;
+  left: 0;
+  border-right: none;
+  border-top: none;
+}
+
+.br {
+  bottom: 0;
+  right: 0;
+  border-left: none;
+  border-top: none;
+}
+
+/* Scan line */
+.scan-line {
+  position: absolute;
+  width: 100%;
+  height: 5px;
+  background: orange;
+  animation: scan 2s linear infinite;
+}
+
+/* Animation */
+@keyframes scan {
+  0% { top: 0; }
+  100% { top: 100%; }
+}

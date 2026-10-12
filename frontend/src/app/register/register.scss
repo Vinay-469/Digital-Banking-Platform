@@ -1,0 +1,133 @@
+/* Background Gradient */
+.registration-wrapper {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.main-card {
+  min-height: 600px;
+}
+
+.section-title {
+  color: #2c3e50;
+  font-weight: 700;
+  border-left: 5px solid #81d4fa;
+  padding-left: 15px;
+  margin-bottom: 25px;
+}
+
+/* Custom Progress Stepper */
+.stepper-container {
+  max-width: 600px;
+  z-index: 1;
+}
+
+.stepper-line {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #e0e0e0;
+  z-index: -1;
+}
+
+.step-item {
+  text-align: center;
+  width: 80px;
+}
+
+.step-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #e0e0e0;
+  color: #bdbdbd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.step-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #9e9e9e;
+  margin-top: 8px;
+  text-transform: uppercase;
+}
+
+/* Active and Completed States */
+.step-item.active .step-circle {
+  border-color: #81d4fa;
+  color: #81d4fa;
+  transform: scale(1.1);
+  box-shadow: 0 4px 10px rgba(129, 212, 250, 0.3);
+}
+
+.step-item.active .step-label {
+  color: #333;
+}
+
+.step-item.completed .step-circle {
+  background: #ff4081;
+  border-color: #ff4081;
+  color: white;
+}
+
+/* Button Styles */
+.btn-next {
+  background-color: #81d4fa;
+  color: white;
+  border: none;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.btn-next:hover {
+  background-color: #4fc3f7;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(129, 212, 250, 0.4);
+}
+
+.btn-submit {
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* Success Styles */
+.success-icon-box {
+  width: 80px;
+  height: 80px;
+  background: #d4edda;
+  color: #28a745;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  font-size: 3rem;
+}
+
+.credential-card {
+  background: #f8f9fa;
+  max-width: 320px;
+  border: 1px dashed #dee2e0;
+}
+
+/* Animations */
+.animate-in {
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Material Form Override */
+::ng-deep .mat-mdc-form-field-subscript-wrapper {
+  font-size: 11px !important;
+}

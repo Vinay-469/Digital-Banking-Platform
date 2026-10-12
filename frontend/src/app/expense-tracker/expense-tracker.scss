@@ -1,0 +1,119 @@
+.expense-container {
+  padding: 4.5%;
+  background: #f5f7fb;
+  font-family: 'Segoe UI';
+  padding-bottom:10%;
+}
+
+/* HEADER */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+}
+
+.top-bar h2 {
+  color: #4f46e5;
+}
+
+.subtitle {
+  color: #6b7280;
+}
+
+/* SUMMARY */
+.summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+/* COLORS */
+.income-text { color: #22c55e; font-weight: bold; }
+.expense-text { color: #ef4444; font-weight: bold; }
+
+/* CHARTS */
+.charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2%;
+  margin-top: 2%;
+  height: 350px;
+  width: 100%;
+}
+
+.chart-box {
+  background: white;
+  padding: 10px;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+/* DONUT */
+.donut {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 400px;
+}
+
+.donut canvas {
+  width: 35%;
+}
+
+/* TABLE */
+.table-container {
+  background: white;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 20px;
+  border-radius: 14px;
+  height: 802px;
+  width: 103%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.table-scroll {
+  max-height: 90%;
+  overflow-y: auto;
+}
+
+.table-scroll thead th {
+  position: sticky;
+  top: 0;
+  background: #f3f4f6;
+}
+
+table {
+  width: 103%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+/* ACCOUNT TABS */
+.account-tabs {
+  display: flex;
+  gap: 20px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.tab {
+  padding: 10px;
+  cursor: pointer;
+  color: #6b7280;
+}
+
+.tab.active {
+  color: #4f46e5;
+  font-weight: bold;
+  border-bottom: 3px solid #4f46e5;
+}

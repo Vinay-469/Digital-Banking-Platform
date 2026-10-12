@@ -1,0 +1,156 @@
+<div class="text-white py-4" style="background-color: #101081;">
+  <div class="container text-center">
+    <h1 class="fw-bold">Welcome to EndavaBank</h1>
+    <p class="lead mt-3">
+      Your trusted partner for safe, smart & simple banking
+    </p>
+    <div class="mt-4">
+      <button *ngIf="role=='User'" class="btn btn-light me-3" (click)="goToMyAccounts()">My Account</button>
+      <button *ngIf="role==null" class="btn btn-light me-3" (click)="goToLogin()">Login</button>
+      <button *ngIf="role==null" class="btn btn-light" (click)="goToRegister()">Open Account</button>
+      <button *ngIf="role=='Manager'" class="btn btn-light me-3" (click)="goToApplications()">Account
+        applications</button>
+    </div>
+  </div>
+</div>
+<div class="container my-5">
+  <div class="d-flex flex-row justify-content-evenly text-center">
+    <div *ngIf="role=='User'" class="col-md-3 px-4">
+      <div class="card shadow h-100">
+        <div class="card-body">
+          <h5 class="card-title">Net Banking</h5>
+          <p class="card-text">Enjoy fast online fund transfers</p>
+          <button *ngIf="!netbankingStatus" class="btn btn-primary" (click)="goToNetBanking()">
+            Register
+          </button>
+          <button *ngIf="netbankingStatus" class="btn btn-primary" (click)="goToBankTransfer()">
+            Tranfer Money
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="userId==null" class="col-md-3 px-4">
+      <div class="card shadow h-100">
+        <div class="card-body">
+          <h5 class="card-title">Net Banking</h5>
+          <p class="card-text">Enjoy fast online fund transfers</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3 px-4" *ngIf="role=='User'">
+      <div class="card shadow h-100">
+        <div class="card-body">
+          <h5 class="card-title">Cards</h5>
+          <p class="card-text">Access and manage your Debit & credit cards</p>
+          <button *ngIf="userId!=null" class="btn btn-primary"
+            [routerLink]="authState.hasCard()  ? '/my-cards' : '/cards'">
+            {{ authState.hasCard() ? 'View' : 'Apply' }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 px-4" *ngIf="role=='Manager'">
+      <div class="card shadow h-100">
+        <div class="card-body">
+          <h5 class="card-title">Cards</h5>
+          <p class="card-text">Access all Debit & credit card applications</p>
+          <button *ngIf="userId!=null" class="btn btn-primary" routerLink="/applyDebitCard">View Appications</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 px-4" *ngIf="userId==null">
+      <div class="card shadow h-100">
+        <div class="card-body">
+          <h5 class="card-title">Cards</h5>
+          <p class="card-text">Access all Debit card related operations</p>
+          <button *ngIf="userId!=null" class="btn btn-primary" routerLink="/applyDebitCard">View Appications</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 px-4">
+      <div class="card shadow h-100">
+        <div class="card-body">
+          <h5 class="card-title">KYC Verification</h5>
+          <p class="card-text">Upload documents & get verified</p>
+          <button *ngIf="userId!=null" class="btn btn-primary" (click)="goToKyc()">
+            {{ isKycDone ? 'View' : 'Upload' }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 px-4">
+      <div class="card shadow h-100">
+        <div class="card-body">
+          <h5 class="card-title">Emi Calculator</h5>
+          <p class="card-text">Calculate emi for loans like home, personal & car loans</p>
+          <button *ngIf="userId!=null" class="btn btn-primary" (click)="goToEmiCalculator()">Calculate</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="role=='User' && hasTransactions" class="bg-info bg-opacity-10">
+  <div class="d-flex gap-17 justify-content-around pt-4 h-55 pb-5 mb-2 px-5 bg-info bg-opacity-10">
+    <h4> Recent Transactions</h4>
+    <span>
+      <h6 (click)="goToTransactions()" class="btn py-1 mx-2 bg-primary bg-opacity-10 view">My Transactions</h6>
+      <h6 class="btn py-1 mx-2 bg-primary bg-opacity-10 view" routerLink="/expenseTracker">My Expenses</h6>
+    </span>
+  </div>
+  <div class="py-3">
+    <div *ngFor="let transaction of transactions">
+      <div class="transaction justify-content-around">
+        <div class="d-flex align-items-center mb-3 bg-color pt-2 w-75">
+          <div class="status" [ngClass]="getStatusClass(transaction?.status)">
+            <img *ngIf="transaction?.status" src="/assets/checked.png" height="30px" alt="success">
+            <img *ngIf="!transaction?.status" src="/assets/cancel.png" height="30px" alt="failed">
+          </div>
+          <div class="details">
+            <div class="d-flex">
+              <img *ngIf="transaction?.transactionType" src="/assets/left-down.png" height="15px" alt="success"
+                class="mt-2">
+              <img *ngIf="!transaction?.transactionType" src="/assets/right-up.png" height="15px" alt="failed"
+                class="mt-2">
+              &nbsp;&nbsp;
+              <h4 *ngIf="transaction?.referenceAccount?.user?.fullName==null">ICICIBNK LTD</h4>
+              <h4 *ngIf="transaction?.referenceAccount?.user?.fullName!=null">{{
+                transaction?.referenceAccount?.user?.fullName }} </h4>
+            </div>
+            <p>
+              {{ transaction?.transactionDate | date:'dd MMM yyyy'}}
+              | <strong> TXN ID {{ transaction?.transactionId }}</strong>
+            </p>
+          </div>
+
+          <div class="me-3">
+            <h4 [ngClass]="transaction?.transactionType ? 'credit' : 'debit'">₹{{ transaction?.amount }}</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="bg-light py-5">
+  <div class="container">
+    <h2 class="text-center mb-4">Our Services</h2>
+    <div class="row justify-content-around">
+      <div class="col-md-4 mb-3">
+        <ul class="list-group shadow">
+          <li class="list-group-item">Savings Account</li>
+          <li class="list-group-item">Current Account</li>
+          <li class="list-group-item">Salary Account</li>
+        </ul>
+      </div>
+      <div class="col-md-4 mb-3">
+        <ul class="list-group shadow">
+          <li class="list-group-item">Net Banking</li>
+          <li class="list-group-item">Loan Application & Management</li>
+          <li class="list-group-item">Card Management</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

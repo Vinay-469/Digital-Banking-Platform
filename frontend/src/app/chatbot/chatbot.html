@@ -1,0 +1,73 @@
+<button *ngIf="!isChatOpen" class="chat-icon-bar" (click)="toggleChat()">
+  <span class="chat-icon"><img src="/assets/nancy2.gif" /></span>
+  <span class="chat-icon-bar-end"></span>
+  <span class="chat-icon-text">Hi, I'm Nancy</span>
+  <img class="chat-Ai-logo" src="/assets/stars.png" alt="Ai logo">
+</button>
+<div *ngIf="isChatOpen" class="chat-overlay" (click)="toggleChat()"></div>
+<div class="chat-sidebar" [class.open]="isChatOpen">
+
+  <div class="chat-header">
+    <div class="header-left">
+      <img class="avatar" src="/assets/nancy.png" />
+      <div class="bot-name">Nancy</div>
+    </div>
+    <i class="bi bi-x fs-3" (click)="toggleChat()"></i>
+  </div>
+
+  <div class="chat-box">
+    <div *ngFor="let msg of messages">
+      <div *ngIf="msg.sender === 'bot'" class="bot-row">
+        <img class="avatar" src="/assets/nancy.png" />
+        <div class="bot-bubble">
+          {{ msg.text }}
+          <br>
+          <button *ngIf="msg.button" class="chip-btn" (click)="goTo(msg.button.route)">
+            {{ msg.button.label }}
+          </button>
+          <div *ngIf="msg.options" class="quick-options">
+            <button *ngFor="let opt of msg.options" (click)="sendQuick(opt)">
+              {{ opt }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="msg.sender === 'user'" class="user-row">
+        <div class="user-bubble me-2">
+          {{ msg.text }}
+        </div>
+        <img class="avatar1" src="/assets/profile.png" />
+      </div>
+
+    </div>
+
+    <div *ngIf="isTyping" class="typing">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+
+  <div *ngIf="isListening" class="voice-box">
+    <div class="mic-animation"><img src="/assets/listening.gif" alt="listening"></div>
+    <div class="live-text">
+      {{ liveTranscript || 'Start speaking...' }}
+    </div>
+  </div>
+
+  <!-- INPUT -->
+  <div class="input-box">
+
+    <input [(ngModel)]="userInput" placeholder="Ask Nancy..." (keyup.enter)="sendMessage()" />
+
+    <button (click)="startListening()" [class.active]="isListening">
+      <i class="bi" [ngClass]="isListening ? 'bi-mic-fill' : 'bi-mic'"></i>
+    </button>
+
+    <button (click)="sendMessage()">
+      <i class="bi bi-send"></i>
+    </button>
+
+  </div>
+
+
+</div>

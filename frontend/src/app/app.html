@@ -1,0 +1,110 @@
+<nav class="d-flex justify-content-between align-items-center px-3 bg-mycolor shadow fixed-top text-white"
+    style="background-color: #060661;">
+    <img class="py-2" src="/assets/logo1.png" height="50px" (click)="selectItem('Home')" style="cursor: pointer;">
+    <div *ngIf="!isNew" class="d-flex align-items-center gap-3">
+        <h5 (click)="selectItem('Profile')" style="cursor: pointer;padding-top: 2%;">{{userName}}</h5>
+
+        <button type="button" class="btn btn-link position-relative text-white notification-btn"
+            (click)="toggleNotifications($event)">
+
+            <i class="bi bi-bell-fill fs-5"></i>
+
+            <span *ngIf="unreadCount > 0" class="custom-badge">
+                {{ unreadCount }}
+            </span>
+        </button>
+
+        <div class="btn-group dropstart">
+
+            <!-- Main Button -->
+            <h5 type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown"
+                data-bs-display="static" aria-expanded="false" class="pt-2" (click)="toggleDropdown($event)"
+                aria-expanded="{{ isOpen }}">
+                <i class="bi bi-person-fill fs-4 ms-1"></i>
+            </h5>
+            <ul class="dropdown-menu" [class.show]="isOpen">
+                <li>
+                    <a class="dropdown-item" (click)="selectItem('Home')"><i class="bi bi-house-fill me-1"></i> Home</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" (click)="selectItem('Profile')"><i class="bi bi-person-fill me-1"></i>
+                        Profile</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" (click)="selectItem('Change password')"><i class="bi bi-key-fill me-1"></i>
+                        Change password</a>
+                </li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li>
+                    <a class="dropdown-item" (click)="selectItem('Logout')">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<marquee behavior="scroll" direction="left" class="bg-info py-1" style="margin-bottom: -0.55%;margin-top: 4%;"
+    *ngIf="userRole === 'User' && showNotificationScrolling && isHomePage">
+    <strong>New notification : {{scrolling}}</strong>
+</marquee>
+
+
+<div *ngIf="showNotifications" class="notification-panel shadow" (click)="$event.stopPropagation()">
+    <div class="notification-header">
+
+        <h3 class="title">Notifications</h3>
+
+        <button class="view-btn" (click)="viewAllNotifications()">
+            View All
+        </button>
+
+    </div>
+
+    <!-- Notifications -->
+    <div *ngFor="let notif of panelNotifications" class="notification-item">
+
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <p class="mb-1">{{ notif.message }}</p>
+                <span class="d-flex  justify-content-between text-center">
+                    <small class="text-muted">
+                        {{ notif.createdAt | date:'dd MMM yyyy, hh:mm a' }}
+                    </small>
+                    <button class="btn btn-sm bg-danger bg-opacity-10"
+                        (click)="markNotificationsAsRead(notif.notificationId)"> Mark as read </button></span>
+            </div>
+
+            <!-- Mark as read -->
+        </div>
+
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="notifications.length === 0" class="p-3 text-center text-muted">
+        No new notifications
+    </div>
+
+</div>
+
+
+<div class="blur-overlay" *ngIf="showBlurCard">
+    <div class="center-card">
+        <h3><i class="bi bi-info-circle"></i> Session Timeout</h3>
+        <p>Your session has expired, click on continue to login.</p>
+        <button class="btn btn-primary" (click)="logout()">Continue</button>
+    </div>
+</div>
+
+<app-chatbot *ngIf="showChatbot && userRole!='Manager'"></app-chatbot>
+<div *ngIf="loader.loading$ | async" class="loader-overlay">
+    <svg class="loader" viewBox="0 0 100 100">
+        <g class="points">
+            <circle class="ciw" cx="50" cy="50" r="50" fill="#fff" />
+            <circle class="ci2" cx="5" cy="50" r="4" />
+            <circle class="ci1" cx="95" cy="50" r="4" />
+        </g>
+    </svg>
+</div>
+<!-- <ng-http-loader [spinner]="spinKit.skDoubleBounce"[filteredUrlPatterns]="[]"></ng-http-loader> -->
+<router-outlet></router-outlet>

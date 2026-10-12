@@ -1,0 +1,207 @@
+<div class="profile-container pt-6">
+    <div class="profile-header d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-3">
+            <div class="avatar">
+                <i class="bi bi-person-fill"></i>
+            </div>
+            <div>
+                <h4 class="mb-0">{{user?.fullName}}</h4>
+                <small class="text-muted">{{user?.occupation}}</small>
+            </div>
+        </div>
+        <button *ngIf="userId!=null"  class="btn btn-outline-primary btn-sm" (click)="goToKyc()">
+            {{ isKycDone ? 'View KYC' : 'Upload KYC' }}
+          </button>
+        
+
+    </div>
+    <div class="card profile-card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-person-fill me-1"></i> Personal Details</span>
+            <i class="bi bi-pencil-square edit-icon" (click)="toggleEdit()"> Edit</i>
+        </div>
+        <div class="card-body row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-control" [(ngModel)]="user.fullName" [disabled]="true">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" [(ngModel)]="user.email" [disabled]="true">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Birthday</label>
+                    <input type="date" class="form-control" [(ngModel)]="user.dateOfBirth" [disabled]="true">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Job</label>
+
+                    <input type="text" name="occupation" class="form-control" [(ngModel)]="user.occupation"
+                        #occupation="ngModel" required minlength="3" pattern="^[A-Za-z][A-Za-z ]*$"
+                        [disabled]="!isEditing" [class.is-invalid]="occupation.invalid && occupation.touched">
+
+                    <div class="text-danger mt-1" *ngIf="occupation.invalid && occupation.touched">
+
+                        <small *ngIf="occupation.errors?.['required']">
+                            Occupation is required.
+                        </small>
+
+                        <small *ngIf="occupation.errors?.['minlength']">
+                            Minimum 3 characters required.
+                        </small>
+
+                        <small *ngIf="occupation.errors?.['pattern']">
+                            Occupation must contain only alphabets and should not start with a space.
+                        </small>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">Mobile</label>
+                    <input type="text" class="form-control" [(ngModel)]="user.phone" [disabled]="true">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Gender</label>
+                    <input type="text" class="form-control" [(ngModel)]="user.gender" [disabled]="true">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Joining Date</label>
+                    <input type="date" class="form-control" [(ngModel)]="user.dateJoined" [disabled]="true">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Marital Status</label>
+                    <select class="form-select" [(ngModel)]="user.maritalStatus" [disabled]="!isEditing">
+                        <option value="Single">Single</option>
+                        <option value="Married">Married</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
+            </div>
+
+            <div *ngIf="isEditing" class="d-flex gap-3 mt-3">
+                <button class="btn btn-outline-danger btn-sm left-fixed" (click)="toggleEdit()">
+                    Cancel
+                </button>
+                <button class="btn btn-outline-primary btn-sm" (click)="saveProfile()">
+                    Update
+                </button>
+            </div>
+        </div>
+    </div>
+    <form #addressForm="ngForm">
+        <div class="card profile-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>
+                    <i class="bi bi-house-fill me-1"></i> Address Details
+                </span>
+                <i class="bi bi-pencil-square edit-icon" [class.text-primary]="isAddressEditing"
+                    (click)="toggleAddressEdit()"> Edit</i>
+            </div>
+            <div class="card-body row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">Door Number</label>
+                        <input type="text" name="doorNumber" class="form-control" [(ngModel)]="user.address.doorNumber"
+                            #door="ngModel" required minlength="1" [disabled]="!isAddressEditing"
+                            [class.is-invalid]="door.invalid && door.touched">
+                        <div class="text-danger" *ngIf="door.invalid && door.touched">
+                            <small *ngIf="door.errors?.['required']">Door number is required.</small>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Landmark</label>
+                        <input type="text" name="landmark" class="form-control" [(ngModel)]="user.address.landMark"
+                            #landmark="ngModel" required minlength="3" [disabled]="!isAddressEditing"
+                            [class.is-invalid]="landmark.invalid && landmark.touched">
+                        <div class="text-danger" *ngIf="landmark.invalid && landmark.touched">
+                            <small *ngIf="landmark.errors?.['required']">Landmark is required.</small>
+                            <small *ngIf="landmark.errors?.['minlength']">Minimum 3 characters required.</small>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Street</label>
+                        <input type="text" name="street" class="form-control" [(ngModel)]="user.address.street"
+                            #street="ngModel" required minlength="3" [disabled]="!isAddressEditing"
+                            [class.is-invalid]="street.invalid && street.touched">
+                        <div class="text-danger" *ngIf="street.invalid && street.touched">
+                            <small *ngIf="street.errors?.['required']">Street is required.</small>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Postal Code</label>
+                        <input type="text" name="pincode" class="form-control" [(ngModel)]="user.address.pinCode"
+                            #pincode="ngModel" required pattern="^[0-9]{6}$" maxlength="6"
+                            [disabled]="!isAddressEditing" [class.is-invalid]="pincode.invalid && pincode.touched">
+                        <div class="text-danger" *ngIf="pincode.invalid && pincode.touched">
+                            <small *ngIf="pincode.errors?.['required']">Postal code is required.</small>
+                            <small *ngIf="pincode.errors?.['pattern']">Enter valid 6-digit pincode.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">City</label>
+                        <input type="text" name="city" class="form-control" [(ngModel)]="user.address.city"
+                            #city="ngModel" required pattern="^[A-Za-z ]+$" [disabled]="!isAddressEditing"
+                            [class.is-invalid]="city.invalid && city.touched">
+                        <div class="text-danger" *ngIf="city.invalid && city.touched">
+                            <small *ngIf="city.errors?.['required']">City is required.</small>
+                            <small *ngIf="city.errors?.['pattern']">Only letters allowed.</small>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">District</label>
+                        <input type="text" name="district" class="form-control" [(ngModel)]="user.address.district"
+                            #district="ngModel" required pattern="^[A-Za-z ]+$" [disabled]="!isAddressEditing"
+                            [class.is-invalid]="district.invalid && district.touched">
+                        <div class="text-danger" *ngIf="district.invalid && district.touched">
+                            <small *ngIf="district.errors?.['required']">District is required.</small>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">State</label>
+                        <input type="text" name="state" class="form-control" [(ngModel)]="user.address.state"
+                            #state="ngModel" required pattern="^[A-Za-z ]+$" [disabled]="!isAddressEditing"
+                            [class.is-invalid]="state.invalid && state.touched">
+                        <div class="text-danger" *ngIf="state.invalid && state.touched">
+                            <small *ngIf="state.errors?.['required']">State is required.</small>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Country</label>
+                        <input type="text" name="country" class="form-control" [(ngModel)]="user.address.country"
+                            #country="ngModel" required pattern="^[A-Za-z ]+$" [disabled]="!isAddressEditing"
+                            [class.is-invalid]="country.invalid && country.touched">
+                        <div class="text-danger" *ngIf="country.invalid && country.touched">
+                            <small *ngIf="country.errors?.['required']">Country is required.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="isAddressEditing" class="d-flex gap-3 mt-3">
+                    <button class="btn btn-outline-danger btn-sm left-fixed" (click)="toggleAddressEdit()">
+                        Cancel
+                    </button>
+                    <button class="btn btn-outline-primary btn-sm" (click)="saveAddress()">
+                        Update
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="card profile-card button" routerLink="/reset">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-key"></i> Change Password</span>
+            <i class="bi bi-pencil-square edit-icon"></i>
+        </div>
+    </div>
+</div>

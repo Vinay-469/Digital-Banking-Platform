@@ -1,0 +1,170 @@
+<div class="wallet-container" style="padding-top: 5%;">
+  <div class="balance-card">
+    <div class="balance-info">
+      <h2>₹ {{ balance }}</h2>
+      <p>Total balance of available accounts</p>
+    </div>
+
+    <div class="logo">
+      <img src="/assets/bg-removebg-preview.png">
+    </div>
+    <button (click)="goToAccounts()">View Accounts</button>
+  </div>
+  <h3 class="mt-2 mb-3">Transaction History</h3>
+  <div class="d-flex mx-3 mb-1 justify-content-between">
+    <div class="search-box">
+      <input type="text" [(ngModel)]="keyword" placeholder="Search by Name...">
+      <button (click)="searchTx()" class="bi bi-search"></button>
+    </div>
+    <div class="d-flex ">
+      <div class="button bg-opacity-10 mt-2" (click)="filter()"><strong class="bg-info m-1 p-2 rounded">Filter <i
+            class="bi bi-sort-down"></i></strong>
+      </div>
+      <button class="reset-btn ms-2 pb-2" (click)="resetFilter()">
+        Reset
+      </button>
+    </div>
+    <div *ngIf="isFiltered" class="filter-panel shadow d-flex flex-wrap">
+      <div class="mx-2 pt-4 panel">
+
+        <mat-form-field appearance="outline" class=" small-field h-25 m-2 w-98 w-md-25 ">
+          <mat-label>Type</mat-label>
+          <mat-select [(ngModel)]="type" class="px-3">
+            <mat-option [value]="null">All</mat-option>
+            <mat-option [value]="true">Credit</mat-option>
+            <mat-option [value]="false">Debit</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-92 w-md-25 small-field h-25 m-2">
+          <mat-label>From Date</mat-label>
+          <input matInput [matDatepicker]="fromPicker" [(ngModel)]="fromDate" [max]="minDate">
+          <mat-datepicker-toggle matSuffix [for]="fromPicker">
+          </mat-datepicker-toggle>
+          <mat-datepicker #fromPicker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-92 w-md-25 small-field h-25 m-2">
+          <mat-label>To Date</mat-label>
+          <input matInput [matDatepicker]="toPicker" [(ngModel)]="toDate" [max]="minDate" [min]="fromDate">
+          <mat-datepicker-toggle matSuffix [for]="toPicker">
+          </mat-datepicker-toggle>
+          <mat-datepicker #toPicker></mat-datepicker>
+        </mat-form-field>
+
+      </div>
+      <div class="d-flex gap-3 py-3">
+        <button mat-raised-button color="primary" class="ms-4" (click)="applyFilter()">
+          <i class="bi bi-funnel-fill"></i>
+          Apply Filter
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="history">
+    <div class="transaction" *ngFor="let item of transactions">
+      <div class="d-flex align-items-center mb-3 bg-color pt-2" (click)="viewTransaction(item.transactionId)">
+        <div class="status" [ngClass]="getStatusClass(item.status)">
+          <img *ngIf="item.status" src="/assets/checked.png" height="30px" alt="success">
+          <img *ngIf="!item.status" src="/assets/cancel.png" height="30px" alt="failed">
+        </div>
+        <div class="details">
+          <div class="d-flex">
+            <img *ngIf="item.transactionType" src="/assets/left-down.png" height="15px" alt="success" class="mt-2">
+            <img *ngIf="!item.transactionType" src="/assets/right-up.png" height="15px" alt="failed" class="mt-2">
+            &nbsp;&nbsp;
+            <h4 *ngIf="item.referenceAccount?.user?.fullName==null">ICICIBNK LTD</h4>
+            <h4 *ngIf="item.referenceAccount?.user?.fullName!=null">{{ item.referenceAccount?.user?.fullName }} </h4>
+          </div>
+          <p>
+            {{ formatDate(item.transactionDate) }}
+            | <strong> TXN ID {{ item.transactionId }}</strong>
+          </p>
+        </div>
+        <div class="right left fixed-left d-flex ">
+          <h4 [ngClass]="item.transactionType ? 'credit' : 'debit'">₹{{ item.amount }}</h4>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="selectedTransaction" class="blur-overlay">
+  <div class="payment-wrapper" id="receiptCard">
+    <div class="payment-card">
+      <div class="payment-header ">
+        <button class="close-btn right no-print" (click)="closeCard()"><i class="bi bi-x"></i></button>
+        <h5>Payment Details</h5>
+      </div>
+      <div class="success-circle">
+        <img src="assets/checked.png" alt="done" height="70px">
+      </div>
+      <div class="payment-total">
+        <p>Payment Completed</p>
+        <h2>₹{{ selectedTransaction.amount }}</h2>
+      </div>
+      <div class="details-box">
+        <div class="detail-row">
+          <span>Transaction ID</span>
+          <span class="txn-id">
+            TXNID{{ selectedTransaction.transactionId }}
+            <button class="copy-btn text-center no-print"
+              (click)="copyTxnId('TXNID' + selectedTransaction.transactionId)" title="Copy">
+              <img *ngIf="!isCopied" src="/assets/file.png" alt="copy" class="copy-icon">
+              <video *ngIf="isCopied" autoplay muted class="copy-icon1">
+                <source src="/assets/verified.mp4" type="video/mp4">
+              </video>
+            </button>
+          </span>
+        </div>
+        <div class="detail-row">
+          <span> {{ selectedTransaction.transactionType === true ? 'Credited to' : 'Debited from' }}
+          </span>
+          <span>{{ selectedTransaction.account?.accountType?.accountTypeName }}</span>
+        </div>
+        <div class="detail-row">
+          <span>Recipient</span>
+          <span *ngIf="selectedTransaction.transactionType; else debitUser">
+            {{ selectedTransaction.account?.user?.fullName }}
+          </span>
+
+          <ng-template #debitUser>
+            <span *ngIf="selectedTransaction.referenceAccount?.user?.fullName">
+              {{ selectedTransaction.referenceAccount?.user?.fullName }}
+            </span>
+          </ng-template>
+
+        </div>
+        <div class="detail-row">
+          <span>Transaction Date</span>
+          <span>
+            {{ selectedTransaction.transactionDate | date:'dd MMM yyyy' }}
+          </span>
+        </div>
+        <div class="detail-row">
+          <span>Status</span>
+          <span>{{ selectedTransaction.status }}</span>
+        </div>
+        <div class="detail-row">
+          <!-- <span>
+              {{ selectedTransaction.transactionType === true ? 'Credited From' : 'Credited To' }}
+            </span> <span *ngIf="selectedTransaction.referenceAccount?.user?.fullName==null">ICICIBNK LTD</span>
+            <span *ngIf="!selectedTransaction.transactionType; else debitUser">
+              {{ selectedTransaction.account?.accountNumber }}
+            </span>
+
+            <ng-template #debitUser>
+              <span *ngIf="selectedTransaction.referenceAccount?.user?.fullName">
+                {{ selectedTransaction.referenceAccount?.accountNumber }}
+              </span>
+            </ng-template> -->
+        </div>
+      </div>
+      <button class="pdf-btn no-print" (click)="downloadReceipt()">
+        Download Receipt
+      </button>
+    </div>
+  </div>
+</div>

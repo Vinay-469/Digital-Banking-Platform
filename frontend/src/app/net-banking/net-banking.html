@@ -1,0 +1,28 @@
+<div class="container pt-9 vh-95">
+  <div class="card shadow p-4 col-md-4 mx-auto">
+    <h4 class="text-center mb-4">
+      {{isReset? 'Reset Password':'Net Banking Registration'}}
+    </h4>
+    <form [formGroup]="netBankingForm">
+      <input type="text" class="form-control mb-3" placeholder="Mobile Number" formControlName="mobile" />
+      <input type="email" class="form-control mb-3" placeholder="Email" formControlName="email" />
+
+      <button type="button" class="btn btn-primary w-100 mb-3" (click)="sendOtp()" [disabled]="isOtpSent">
+        {{ isOtpSent ? 'Resend OTP in ' + delayTime + 's' : 'Send OTP' }}
+      </button>
+
+      <div *ngIf="isOtp">
+        <label class="mb-2 fw-bold">
+          Enter OTP
+        </label>
+
+        <ng-otp-input [config]="otpConfig" (onInputChange)="onOtpChange($event)">
+        </ng-otp-input>
+
+        <button type="button" class="btn btn-success w-100 mt-3" (click)="verifyOtp()">
+          Verify OTP
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

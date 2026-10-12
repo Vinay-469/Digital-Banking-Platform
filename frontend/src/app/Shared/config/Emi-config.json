@@ -1,0 +1,32 @@
+{
+  "home": {
+    "loanAmount": 5000000,
+    "interestRate": 8.5,
+    "tenure": 20,
+    "minAmount": 100000,
+    "maxAmount": 20000000,
+    "maxTenure": 30,
+    "minInterest": 6,
+    "maxInterest": 12
+  },
+  "personal": {
+    "loanAmount": 750000,
+    "interestRate": 11,
+    "tenure": 3,
+    "minAmount": 50000,
+    "maxAmount": 3000000,
+    "maxTenure": 5,
+    "minInterest": 10,
+    "maxInterest": 24
+  },
+  "car": {
+    "loanAmount": 400000,
+    "interestRate": 8.5,
+    "tenure": 5,
+    "minAmount": 100000,
+    "maxAmount": 2000000,
+    "maxTenure": 7,
+    "minInterest": 7,
+    "maxInterest": 15
+  }
+}

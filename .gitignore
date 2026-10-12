@@ -1,0 +1,41 @@
+# Dependencies and build output
+node_modules/
+bin/
+obj/
+dist/
+out-tsc/
+.angular/
+.angular-run/
+.artifacts/
+coverage/
+TestResults/
+
+# Local tools and editor state
+.agents/
+.codex/
+.vs/
+.idea/
+*.user
+*.suo
+
+# Logs and archives
+Logs/
+*.log
+*.zip
+*.7z
+
+# Local secrets
+.env
+.env.*
+!.env.example
+!.env.sample
+secrets.json
+appsettings.Local.json
+*.pfx
+*.pem
+*.key
+
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,0 +1,230 @@
+<div class="container pt-6">
+
+  <!-- ===================== PAYMENT METHOD ===================== -->
+  <div class="tranferCard pt-4" *ngIf="showTransferCard">
+
+    <h1 class="heading">Choose Payment Method</h1>
+
+    <div class="container d-flex gap-4 justify-content-center">
+
+      <!-- QR Payment -->
+      <div class="card1 card green" (click)="goToQrScanner()">
+        <div class="icon">
+          <i class="bi bi-qr-code-scan"></i>
+        </div>
+        <h3>Scan & Pay</h3>
+        <p>Quickly scan QR and complete your payment instantly</p>
+      </div>
+
+      <!-- Bank Transfer -->
+      <div class="card1 card orange" (click)="goToB2BTransfer()">
+        <div class="icon">
+          <i class="bi bi-bank"></i>
+        </div>
+        <h3>Bank Transfer</h3>
+        <p>Send money securely using account number & IFSC</p>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ===================== QR SCANNER ===================== -->
+<!-- <div *ngIf="showQrCard" style="text-align:center;">
+  <h3>QR Scanner</h3>
+  <div id="qr-reader" style="width:300px; margin:auto;"></div>
+</div> -->
+<div *ngIf="showQrCard" class="scanner-page">
+
+  <!-- Scanner area -->
+ <div class="scanner-box">
+
+  <div id="qr-reader" style="z-index: 100;"></div>
+
+  <!-- Overlay -->
+  <div class="overlay" style="z-index: -200; border-radius: 10px;">
+</div>
+    <div class="scan-area" style="z-index: 201;">
+
+      <span class="corner tl"></span>
+      <span class="corner tr"></span>
+      <span class="corner bl"></span>
+      <span class="corner br"></span>
+
+      <div class="scan-line"></div>
+
+    </div>
+
+</div>
+</div>
+  <!-- ===================== ACCOUNT DETAILS ===================== -->
+  <div class="card shadow p-4 col-md-5 mx-auto"
+       *ngIf="showAccountCard && !showTransferCard">
+
+    <h4 class="text-center mb-4">Enter Account Details</h4>
+
+    <form [formGroup]="transferForm" (ngSubmit)="submitTransfer()">
+
+      <div class="mb-3">
+        <label class="form-label">Recipient Account Number</label>
+        <input type="text" class="form-control" formControlName="accountNumber">
+
+        <small class="text-danger"
+          *ngIf="transferForm.get('accountNumber')?.touched &&
+                 transferForm.get('accountNumber')?.invalid">
+          Invalid Account Number
+        </small>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Re-enter Account Number</label>
+        <input type="text" class="form-control" formControlName="reEnterAccountNumber">
+
+        <small class="text-danger"
+          *ngIf="transferForm.get('reEnterAccountNumber')?.touched &&
+                 transferForm.get('reEnterAccountNumber')?.invalid">
+          Invalid Account Number
+        </small>
+
+        <small class="text-danger"
+          *ngIf="transferForm.get('accountNumber')?.value !==
+                 transferForm.get('reEnterAccountNumber')?.value &&
+                 transferForm.get('reEnterAccountNumber')?.touched">
+          Account numbers do not match
+        </small>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">IFSC Code</label>
+        <input type="text" class="form-control" formControlName="IFSC">
+      </div>
+
+      <button type="submit" class="btn btn-success w-100"
+              [disabled]="transferForm.invalid">
+        Continue
+      </button>
+    </form>
+  </div>
+
+
+  <!-- ===================== AMOUNT ===================== -->
+  <div class="card shadow p-4 col-md-5 mx-auto w-35"
+       *ngIf="showAmountCard">
+
+    <h4 class="text-center mb-3">Send Money</h4>
+
+    <p class="text-center mb-1">You are paying to</p>
+    <h5 class="text-center text-primary mb-3">{{ accountHolderName }}</h5>
+
+    <form [formGroup]="amountForm" (ngSubmit)="submitAmount()">
+
+      <div class="mb-3">
+        <label class="form-label">From Account</label>
+        <select class="form-select" formControlName="fromAccount">
+          <option value="">-- Select Account --</option>
+          <option *ngFor="let acc of activeAccounts" [value]="acc.accountNumber">
+            {{ acc.accountNumber }} (₹{{ acc.balance }}) (threshold: {{ acc.customThreshold }})
+          </option>
+        </select>
+
+        <small class="text-danger"
+          *ngIf="amountForm.get('fromAccount')?.touched &&
+                 amountForm.get('fromAccount')?.invalid">
+          Please select sender account
+        </small>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Amount</label>
+        <input type="number" class="form-control" formControlName="amount">
+
+        <small class="text-danger"
+          *ngIf="amountForm.get('amount')?.touched &&
+                 amountForm.get('amount')?.invalid">
+          Enter valid amount
+        </small>
+      </div>
+
+      <div class="d-flex justify-content-between">
+        <button type="button" class="btn btn-outline-secondary"
+                (click)="goBack()">
+          Back
+        </button>
+
+        <button type="submit" class="btn btn-primary"
+                [disabled]="amountForm.invalid">
+          Transfer
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+
+  <!-- ===================== SUCCESS ===================== -->
+  <div class="card shadow p-4 col-md-5 mx-auto text-center"
+       *ngIf="!showAccountCard && !showAmountCard && !showTransferCard && !showQrCard">
+
+    <img src="/assets/done.gif" alt="done!" class="rounded" />
+
+    <h3 class="text-success fw-bold mt-3">
+      Money transferred successfully
+    </h3>
+
+    <div class="d-flex justify-content-around pt-3">
+      <button class="btn btn-outline-secondary" (click)="goToAmount()">Send again</button>
+      <button class="btn btn-outline-secondary" (click)="goToHistory()">View History</button>
+      <button class="btn btn-outline-secondary" (click)="goToHome()">Home</button>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ===================== THRESHOLD WARNING ===================== -->
+<div class="threshold-overlay" *ngIf="showThresholdCard">
+
+  <div class="threshold-card shadow">
+
+    <h4 class="text-warning text-center mb-3">
+      <i class="bi bi-exclamation-triangle"></i> Threshold Warning
+    </h4>
+
+    <p class="text-center">
+      This transfer will reduce your balance below your threshold limit.
+    </p>
+
+    <p class="text-center fw-bold fs-5">
+      Do you want to continue?
+    </p>
+
+    <div class="d-flex justify-content-center mt-3">
+      <button class="btn btn-secondary me-3" (click)="cancelThreshold()">Cancel</button>
+      <button class="btn btn-danger" (click)="confirmThreshold()">Proceed</button>
+    </div>
+
+    <small class="text-danger fs-7">
+      will automatically be cancelled in <strong>{{delayTime}}s</strong>
+    </small>
+
+  </div>
+</div>
+
+
+<!-- ===================== CANCELLED ===================== -->
+<div class="threshold-overlay" *ngIf="showCancelledCard">
+
+  <div class="cancelled-card shadow text-center">
+
+    <h4 class="text-danger mb-3">
+      <i class="bi bi-exclamation-triangle-fill"></i> Transaction Cancelled
+    </h4>
+
+    <p>Your transfer has been cancelled successfully.</p>
+
+    <button class="btn btn-outline-secondary mt-3" (click)="goHome()">
+      Close
+    </button>
+
+  </div>
+</div>

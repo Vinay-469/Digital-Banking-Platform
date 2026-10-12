@@ -1,0 +1,69 @@
+<div class=" p-2 pb-3 pt-5">
+  <div class="center-card center card w-50 shadow ms-6 p-3">
+    <h4 class="mb-3">Upload KYC Documents</h4>
+
+    <!-- ================= PROFILE IMAGE ================= -->
+    <div class="mb-3">
+      <label>Profile Image</label>
+
+      <div class="d-flex justify-content-evenly" >
+        <!-- Hidden File Input -->
+        <input
+          type="file"
+          #fileInput
+          (change)="onFileSelect($event, 0)"
+          accept="image/*"
+          hidden
+        />
+
+        <!-- Upload Button -->
+        <button
+          class="btn btn-outline-primary w-25 d-flex justify-content-center align-items-center"
+          (click)="fileInput.click()">
+          Upload Image
+        </button>
+
+        <!-- Camera Button -->
+        <button
+          class="btn btn-primary w-25 d-flex justify-content-center align-items-center"
+          (click)="openCamera()">
+          Open Camera
+        </button>
+      </div>
+
+      <!-- Camera Preview -->
+      <div *ngIf="isCameraOpen" class="mt-2 text-center">
+        <video #video width="220" autoplay class="border rounded"></video>
+        <div class="mt-2">
+          <button class="btn btn-success me-2" (click)="captureImage()">Capture</button>
+          <button class="btn btn-danger" (click)="stopCamera()">Cancel</button>
+        </div>
+      </div>
+
+      <!-- Image Preview -->
+      <div *ngIf="profilePreview" class="mt-2 text-center">
+        <img [src]="profilePreview" width="120" class="rounded border">
+      </div>
+    </div>
+
+    <!-- ================= AADHAAR ================= -->
+    <div class="mb-3">
+      <label>Aadhaar</label>
+      <input type="file" (change)="onFileSelect($event, 1)" class="form-control">
+    </div>
+
+    <!-- ================= PAN ================= -->
+    <div class="mb-3">
+      <label>PAN</label>
+      <input type="file" (change)="onFileSelect($event, 2)" class="form-control">
+    </div>
+
+    <small class="text-info">
+      <i class="bi bi-info-circle"></i> Every file must be at most 200KB
+    </small>
+
+    <button class="btn btn-primary w-30 mt-2 "  (click)="upload()">
+      Upload Documents
+    </button>
+  </div>
+</div>
